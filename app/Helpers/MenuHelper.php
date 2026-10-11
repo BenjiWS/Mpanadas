@@ -16,6 +16,7 @@ class MenuHelper
                 'items' => [
                     ['icon' => 'dashboard', 'name' => 'Dashboard', 'path' => '/dashboard'],
                     ['icon' => 'task', 'name' => 'Contador', 'path' => '/contador'],
+                    ['icon' => 'user-profile', 'name' => 'Mi perfil', 'path' => '/profile'],
                 ],
             ],
         ];
