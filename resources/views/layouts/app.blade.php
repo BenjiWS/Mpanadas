@@ -63,7 +63,7 @@
             <div class="flex-1 ml-0 xl:ml-[90px] [.sidebar-expanded_&]:xl:ml-[290px] transition-all duration-300 ease-in-out">
                 @include('layouts.app-header')
 
-                <main class="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+                <main class="p-4 md:p-6">
                     {{ $slot }}
                 </main>
             </div>

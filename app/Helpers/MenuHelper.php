@@ -7,16 +7,41 @@ class MenuHelper
     /**
      * Grupos del menú lateral. Añade aquí las páginas de tu app.
      * Iconos disponibles: ver getIconSvg() más abajo.
+     * 'path' => null muestra el elemento deshabilitado ("Pronto") hasta que exista la página.
      */
     public static function getMenuGroups()
     {
         return [
             [
-                'title' => 'Menu',
+                'title' => 'General',
                 'items' => [
-                    ['icon' => 'dashboard', 'name' => 'Dashboard', 'path' => '/dashboard'],
-                    ['icon' => 'task', 'name' => 'Contador', 'path' => '/contador'],
-                    ['icon' => 'user-profile', 'name' => 'Mi perfil', 'path' => '/profile'],
+                    ['icon' => 'dashboard', 'name' => 'Inicio', 'path' => '/dashboard'],
+                ],
+            ],
+            [
+                'title' => 'Ventas',
+                'items' => [
+                    ['icon' => 'cart-plus', 'name' => 'Nueva venta', 'path' => null],
+                    ['icon' => 'receipt', 'name' => 'Ventas', 'path' => null],
+                    ['icon' => 'charts', 'name' => 'Reportes', 'path' => null],
+                ],
+            ],
+            [
+                'title' => 'Catálogo',
+                'items' => [
+                    ['icon' => 'empanada', 'name' => 'Productos', 'path' => '/productos'],
+                    ['icon' => 'combo', 'name' => 'Combos', 'path' => '/combos'],
+                    ['icon' => 'category', 'name' => 'Categorías', 'path' => null],
+                    ['icon' => 'leaf', 'name' => 'Ingredientes', 'path' => null],
+                    ['icon' => 'tag', 'name' => 'Ofertas', 'path' => null],
+                ],
+            ],
+            [
+                'title' => 'Administración',
+                'items' => [
+                    ['icon' => 'users', 'name' => 'Usuarios', 'path' => null],
+                    ['icon' => 'shield', 'name' => 'Roles y permisos', 'path' => null],
+                    ['icon' => 'settings', 'name' => 'Configuración', 'path' => null],
                 ],
             ],
         ];
@@ -59,6 +84,16 @@ class MenuHelper
             'support-ticket' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 17.0518V12C20 7.58174 16.4183 4 12 4C7.58168 4 3.99994 7.58174 3.99994 12V17.0518M19.9998 14.041V19.75C19.9998 20.5784 19.3282 21.25 18.4998 21.25H13.9998M6.5 18.75H5.5C4.67157 18.75 4 18.0784 4 17.25V13.75C4 12.9216 4.67157 12.25 5.5 12.25H6.5C7.32843 12.25 8 12.9216 8 13.75V17.25C8 18.0784 7.32843 18.75 6.5 18.75ZM17.4999 18.75H18.4999C19.3284 18.75 19.9999 18.0784 19.9999 17.25V13.75C19.9999 12.9216 19.3284 12.25 18.4999 12.25H17.4999C16.6715 12.25 15.9999 12.9216 15.9999 13.75V17.25C15.9999 18.0784 16.6715 18.75 17.4999 18.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>',
 
             'email' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.5 8.187V17.25C3.5 17.6642 3.83579 18 4.25 18H19.75C20.1642 18 20.5 17.6642 20.5 17.25V8.18747L13.2873 13.2171C12.5141 13.7563 11.4866 13.7563 10.7134 13.2171L3.5 8.187ZM20.5 6.2286C20.5 6.23039 20.5 6.23218 20.5 6.23398V6.24336C20.4976 6.31753 20.4604 6.38643 20.3992 6.42905L12.4293 11.9867C12.1716 12.1664 11.8291 12.1664 11.5713 11.9867L3.60116 6.42885C3.538 6.38481 3.50035 6.31268 3.50032 6.23568C3.50028 6.10553 3.60577 6 3.73592 6H20.2644C20.3922 6 20.4963 6.10171 20.5 6.2286ZM22 6.25648V17.25C22 18.4926 20.9926 19.5 19.75 19.5H4.25C3.00736 19.5 2 18.4926 2 17.25V6.23398C2 6.22371 2.00021 6.2135 2.00061 6.20333C2.01781 5.25971 2.78812 4.5 3.73592 4.5H20.2644C21.2229 4.5 22 5.27697 22.0001 6.23549C22.0001 6.24249 22.0001 6.24949 22 6.25648Z" fill="currentColor"></path></svg>',
+            'cart-plus' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M3 4h2l2.2 10.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L20.5 8H6.1"/><circle cx="9.5" cy="19.5" r="1"/><circle cx="17" cy="19.5" r="1"/><path d="M13 9.5v4M11 11.5h4"/></svg>',
+            'receipt' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M6 3.75h12v16.5l-2-1.25-2 1.25-2-1.25-2 1.25-2-1.25-2 1.25V3.75Z"/><path d="M9 8.5h6M9 12h6M9 15.5h3"/></svg>',
+            'empanada' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M3.25 15.5a8.75 8.75 0 0 1 17.5 0v.25H3.25v-.25Z"/><path d="M5.5 15.75l.9-1.4.9 1.4.9-1.4.9 1.4.9-1.4.9 1.4.9-1.4.9 1.4.9-1.4.9 1.4.9-1.4.9 1.4"/><path d="M9 10.5c.8-.9 1.9-1.4 3-1.4"/></svg>',
+            'combo' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="m12 3.75 8.25 4.25L12 12.25 3.75 8 12 3.75Z"/><path d="m3.75 12 8.25 4.25L20.25 12"/><path d="m3.75 16 8.25 4.25L20.25 16"/></svg>',
+            'category' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3.75" y="3.75" width="6.5" height="6.5" rx="1.5"/><rect x="13.75" y="3.75" width="6.5" height="6.5" rx="3.25"/><rect x="3.75" y="13.75" width="6.5" height="6.5" rx="1.5"/><rect x="13.75" y="13.75" width="6.5" height="6.5" rx="1.5"/></svg>',
+            'leaf' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M5 19c0-8 5.5-14 15-14 0 9.5-6 15-14 15"/><path d="M5 19l7-7"/></svg>',
+            'tag' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 4.75v6.6c0 .4.16.78.44 1.06l7.9 7.9a1.5 1.5 0 0 0 2.12 0l5.88-5.88a1.5 1.5 0 0 0 0-2.12l-7.9-7.9a1.5 1.5 0 0 0-1.06-.44H4.75a1 1 0 0 0-1 1Z"/><circle cx="8.25" cy="8.25" r="1.25"/></svg>',
+            'users' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="8" r="3.25"/><path d="M3.25 19.25c.5-3 2.9-5 5.75-5s5.25 2 5.75 5"/><path d="M15.5 4.9a3.25 3.25 0 0 1 0 6.2M17.5 14.6c1.7.6 2.9 2.2 3.25 4.65"/></svg>',
+            'shield' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M12 3.25 4.75 6v5.5c0 4.4 3 7.9 7.25 9.25 4.25-1.35 7.25-4.85 7.25-9.25V6L12 3.25Z"/><path d="m9 12 2 2 4-4"/></svg>',
+            'settings' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="2.75"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l1.6-1.3-1.75-3-1.95.7a7.5 7.5 0 0 0-2.6-1.5L14.4 3.4h-3.5l-.3 2a7.5 7.5 0 0 0-2.6 1.5l-1.95-.7-1.75 3 1.6 1.3a7.6 7.6 0 0 0 0 3l-1.6 1.3 1.75 3 1.95-.7a7.5 7.5 0 0 0 2.6 1.5l.3 2h3.5l.3-2a7.5 7.5 0 0 0 2.6-1.5l1.95.7 1.75-3-1.6-1.3Z"/></svg>',
         ];
 
         return $icons[$iconName] ?? '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg>';

@@ -44,20 +44,21 @@
   --color-current: currentColor;
   --color-transparent: transparent;
   --color-white: #ffffff;
-  --color-black: #101828;
+  --color-black: #241a15;
+  --color-cream: #f3e7d6;
 
-  --color-brand-25: #f2f7ff;
-  --color-brand-50: #ecf3ff;
-  --color-brand-100: #dde9ff;
-  --color-brand-200: #c2d6ff;
-  --color-brand-300: #9cb9ff;
-  --color-brand-400: #7592ff;
-  --color-brand-500: #465fff;
-  --color-brand-600: #3641f5;
-  --color-brand-700: #2a31d8;
-  --color-brand-800: #252dae;
-  --color-brand-900: #262e89;
-  --color-brand-950: #161950;
+  --color-brand-25: #fdf8f4;
+  --color-brand-50: #fbeee4;
+  --color-brand-100: #f7dcc6;
+  --color-brand-200: #f3c9a1;
+  --color-brand-300: #eaa275;
+  --color-brand-400: #e17a3f;
+  --color-brand-500: #c9562a;
+  --color-brand-600: #b04620;
+  --color-brand-700: #8f381b;
+  --color-brand-800: #712f1a;
+  --color-brand-900: #5c2817;
+  --color-brand-950: #33150b;
 
   --color-blue-light-25: #f5fbff;
   --color-blue-light-50: #f0f9ff;
@@ -72,19 +73,19 @@
   --color-blue-light-900: #0b4a6f;
   --color-blue-light-950: #062c41;
 
-  --color-gray-25: #fcfcfd;
-  --color-gray-50: #f9fafb;
-  --color-gray-100: #f2f4f7;
-  --color-gray-200: #e4e7ec;
-  --color-gray-300: #d0d5dd;
-  --color-gray-400: #98a2b3;
-  --color-gray-500: #667085;
-  --color-gray-600: #475467;
-  --color-gray-700: #344054;
-  --color-gray-800: #1d2939;
-  --color-gray-900: #101828;
-  --color-gray-950: #0c111d;
-  --color-gray-dark: #1a2231;
+  --color-gray-25: #fcfbf8;
+  --color-gray-50: #f5f2eb;
+  --color-gray-100: #eee8de;
+  --color-gray-200: #e4dacc;
+  --color-gray-300: #cfc1b0;
+  --color-gray-400: #a8968a;
+  --color-gray-500: #84705f;
+  --color-gray-600: #6b5547;
+  --color-gray-700: #5c4033;
+  --color-gray-800: #4a352b;
+  --color-gray-900: #2e211b;
+  --color-gray-950: #1f1612;
+  --color-gray-dark: #261b16;
 
   --color-orange-25: #fffaf5;
   --color-orange-50: #fff6ed;
@@ -142,19 +143,19 @@
 
   --color-theme-purple-500: #7a5af8;
 
-  --shadow-theme-md: 0px 4px 8px -2px rgba(16, 24, 40, 0.1), 0px 2px 4px -2px rgba(16, 24, 40, 0.06);
-  --shadow-theme-lg: 0px 12px 16px -4px rgba(16, 24, 40, 0.08),
-    0px 4px 6px -2px rgba(16, 24, 40, 0.03);
-  --shadow-theme-sm: 0px 1px 3px 0px rgba(16, 24, 40, 0.1), 0px 1px 2px 0px rgba(16, 24, 40, 0.06);
-  --shadow-theme-xs: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  --shadow-theme-xl: 0px 20px 24px -4px rgba(16, 24, 40, 0.08),
-    0px 8px 8px -4px rgba(16, 24, 40, 0.03);
-  --shadow-datepicker: -5px 0 0 #262d3c, 5px 0 0 #262d3c;
-  --shadow-focus-ring: 0px 0px 0px 4px rgba(70, 95, 255, 0.12);
-  --shadow-slider-navigation: 0px 1px 2px 0px rgba(16, 24, 40, 0.1),
-    0px 1px 3px 0px rgba(16, 24, 40, 0.1);
-  --shadow-tooltip: 0px 4px 6px -2px rgba(16, 24, 40, 0.05),
-    -8px 0px 20px 8px rgba(16, 24, 40, 0.05);
+  --shadow-theme-md: 0px 4px 8px -2px rgba(74, 53, 43, 0.1), 0px 2px 4px -2px rgba(74, 53, 43, 0.06);
+  --shadow-theme-lg: 0px 12px 16px -4px rgba(74, 53, 43, 0.08),
+    0px 4px 6px -2px rgba(74, 53, 43, 0.03);
+  --shadow-theme-sm: 0px 1px 3px 0px rgba(74, 53, 43, 0.1), 0px 1px 2px 0px rgba(74, 53, 43, 0.06);
+  --shadow-theme-xs: 0px 1px 2px 0px rgba(74, 53, 43, 0.05);
+  --shadow-theme-xl: 0px 20px 24px -4px rgba(74, 53, 43, 0.08),
+    0px 8px 8px -4px rgba(74, 53, 43, 0.03);
+  --shadow-datepicker: -5px 0 0 #3a2a22, 5px 0 0 #3a2a22;
+  --shadow-focus-ring: 0px 0px 0px 4px rgba(201, 86, 42, 0.16);
+  --shadow-slider-navigation: 0px 1px 2px 0px rgba(74, 53, 43, 0.1),
+    0px 1px 3px 0px rgba(74, 53, 43, 0.1);
+  --shadow-tooltip: 0px 4px 6px -2px rgba(74, 53, 43, 0.05),
+    -8px 0px 20px 8px rgba(74, 53, 43, 0.05);
 
   --drop-shadow-4xl: 0 35px 35px rgba(0, 0, 0, 0.25), 0 45px 65px rgba(0, 0, 0, 0.15);
 
@@ -193,15 +194,15 @@
 }
 
 @utility menu-item {
-  @apply relative flex items-center w-full gap-3 px-3 py-2 font-medium rounded-lg text-theme-sm;
+  @apply relative flex items-center w-full gap-3 px-3 py-2.5 font-medium rounded-lg text-[15px] border border-transparent;
 }
 
 @utility menu-item-active {
-  @apply bg-brand-50 text-brand-500 dark:bg-brand-500/[0.12] dark:text-brand-400;
+  @apply border-brand-400 text-brand-700 dark:border-brand-400/60 dark:bg-brand-500/[0.08] dark:text-brand-300;
 }
 
 @utility menu-item-inactive {
-  @apply text-gray-700 hover:bg-gray-100 group-hover:text-gray-700 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-gray-300;
+  @apply text-gray-700 hover:bg-white/50 group-hover:text-gray-800 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-gray-300;
 }
 
 @utility menu-item-icon {
@@ -209,7 +210,7 @@
 }
 
 @utility menu-item-icon-active {
-  @apply text-brand-500 dark:text-brand-400;
+  @apply text-brand-600 dark:text-brand-300;
 }
 
 @utility menu-item-icon-inactive {
@@ -233,7 +234,7 @@
 }
 
 @utility menu-dropdown-item-active {
-  @apply bg-brand-50 text-brand-500 dark:bg-brand-500/[0.12] dark:text-brand-400;
+  @apply border-brand-400 text-brand-700 dark:border-brand-400/60 dark:bg-brand-500/[0.08] dark:text-brand-300;
 }
 
 @utility menu-dropdown-item-inactive {
@@ -245,7 +246,7 @@
 }
 
 @utility menu-dropdown-item-active {
-  @apply bg-brand-50 text-brand-500 dark:bg-brand-500/[0.12] dark:text-brand-400;
+  @apply border-brand-400 text-brand-700 dark:border-brand-400/60 dark:bg-brand-500/[0.08] dark:text-brand-300;
 }
 
 @utility menu-dropdown-item-inactive {
@@ -299,7 +300,7 @@
   }
 }
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #344054;
+  background-color: #5c4033;
 }
 @layer utilities {
   /* For Remove Date Icon */
@@ -536,13 +537,13 @@ span.flatpickr-weekday,
 .flatpickr-day.selected.nextMonthDay,
 .flatpickr-day.startRange.nextMonthDay,
 .flatpickr-day.endRange.nextMonthDay {
-  background: #465fff;
+  background: var(--color-brand-500);
   @apply !border-brand-500 !bg-brand-500 hover:!border-brand-500 hover:!bg-brand-500;
 }
 .flatpickr-day.selected.startRange + .endRange:not(:nth-child(7n + 1)),
 .flatpickr-day.startRange.startRange + .endRange:not(:nth-child(7n + 1)),
 .flatpickr-day.endRange.startRange + .endRange:not(:nth-child(7n + 1)) {
-  box-shadow: -10px 0 0 #465fff;
+  box-shadow: -10px 0 0 var(--color-brand-500);
 }
 
 .flatpickr-months .flatpickr-prev-month svg,
@@ -1047,8 +1048,8 @@ html.dark #calendar,
 .task.is-dragging {
   border-radius: 0.75rem;
   box-shadow:
-    0px 1px 3px 0px rgba(16, 24, 40, 0.1),
-    0px 1px 2px 0px rgba(16, 24, 40, 0.06);
+    0px 1px 3px 0px rgba(74, 53, 43, 0.1),
+    0px 1px 2px 0px rgba(74, 53, 43, 0.06);
   opacity: 0.8;
   cursor: grabbing; /* Changes the cursor to indicate dragging */
 }
@@ -1159,19 +1160,19 @@ pre[class*='language-'] {
 }
 
 @utility menu-item {
-  @apply relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium;
+  @apply relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] font-medium border border-transparent;
 }
 
 @utility menu-item-active {
-  @apply bg-brand-50 text-brand-500 dark:bg-brand-500/[0.12] dark:text-brand-400;
+  @apply border-brand-400 text-brand-700 dark:border-brand-400/60 dark:bg-brand-500/[0.08] dark:text-brand-300;
 }
 
 @utility menu-item-inactive {
-  @apply text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-gray-300;
+  @apply text-gray-700 hover:bg-white/50 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-gray-300;
 }
 
 @utility menu-item-icon-active {
-  @apply text-brand-500 dark:text-brand-400;
+  @apply text-brand-600 dark:text-brand-300;
 }
 
 @utility menu-item-icon-inactive {
@@ -1195,7 +1196,7 @@ pre[class*='language-'] {
 }
 
 @utility menu-dropdown-item-active {
-  @apply bg-brand-50 text-brand-500 dark:bg-brand-500/[0.12] dark:text-brand-400;
+  @apply border-brand-400 text-brand-700 dark:border-brand-400/60 dark:bg-brand-500/[0.08] dark:text-brand-300;
 }
 
 @utility menu-dropdown-item-inactive {
@@ -1231,7 +1232,7 @@ pre[class*='language-'] {
 }
 
 @utility docs-menu-item-active {
-  @apply bg-brand-50 text-brand-500 dark:bg-brand-500/[0.12] dark:text-brand-400;
+  @apply border-brand-400 text-brand-700 dark:border-brand-400/60 dark:bg-brand-500/[0.08] dark:text-brand-300;
 }
 
 @utility docs-menu-item-inactive {
@@ -1286,7 +1287,7 @@ pre[class*='language-'] {
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #344054;
+  background-color: #5c4033;
 }
 
 .api-token-chart .apexcharts-tooltip {
