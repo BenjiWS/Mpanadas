@@ -126,6 +126,16 @@ class UsersCrudTest extends TestCase
         $this->assertModelExists($otherAdmin);
     }
 
+    public function test_database_seeder_creates_an_admin_that_can_see_users(): void
+    {
+        $this->seed();
+
+        $admin = User::where('username', 'admin')->firstOrFail();
+
+        $this->assertTrue($admin->hasRole('Administrador'));
+        $this->actingAs($admin)->get('/users')->assertOk()->assertSee('supervisor@mempanadas.test');
+    }
+
     public function test_supervisor_cannot_edit_an_administrator(): void
     {
         $supervisor = User::factory()->create()->assignRole('Supervisor');
