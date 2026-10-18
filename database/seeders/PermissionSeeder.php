@@ -16,18 +16,33 @@ class PermissionSeeder extends Seeder
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        $permissions = [
-            'get users',
-            'create users',
-            'edit users',
-            'delete users',
-            'assign roles',
-        ];
+        $admin = Role::findByName('Administrador', 'web');
+
+        $type_model = config('constants.type_model');
+        $type_description = config('constants.type_description');
+
+        Permission::create(['name' => 'get users', 'description' => 'Visualizar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
+        Permission::create(['name' => 'create users', 'description' => 'Registrar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
+        Permission::create(['name' => 'edit users', 'description' => 'Editar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
+        Permission::create(['name' => 'delete users', 'description' => 'Eliminar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
+        Permission::create(['name' => 'assign roles', 'description' => 'Asignar Roles', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
+
+        Permission::create(['name' => 'get roles', 'description' => 'Visualizar Roles', 'type' => $type_model['Roles'], 'type_description' => $type_description['Roles']]);
+        Permission::create(['name' => 'create roles', 'description' => 'Registrar Roles', 'type' => $type_model['Roles'], 'type_description' => $type_description['Roles']]);
+        Permission::create(['name' => 'edit roles', 'description' => 'Editar Roles', 'type' => $type_model['Roles'], 'type_description' => $type_description['Roles']]);
+        Permission::create(['name' => 'delete roles', 'description' => 'Eliminar Roles', 'type' => $type_model['Roles'], 'type_description' => $type_description['Roles']]);
+
+        $permissions = Permission::all();
 
         foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+            $admin->givePermissionTo($permission);
         }
 
-        Role::findByName('Administrador', 'web')->givePermissionTo($permissions);
+        $supervisor = Role::findByName('Supervisor', 'web');
+
+        $supervisor->givePermissionTo([
+            // Usuarios: solo visualización
+            'get users',
+        ]);
     }
 }
