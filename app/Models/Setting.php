@@ -5,26 +5,35 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['key', 'value'])]
+/**
+ * Datos públicos del negocio. La tabla tiene una sola fila.
+ */
+#[Fillable([
+    'name', 'tagline_es', 'tagline_en', 'address', 'city', 'phone', 'whatsapp',
+    'email', 'instagram', 'facebook', 'hours', 'receipt_width', 'receipt_footer',
+])]
 class Setting extends Model
 {
+    /**
+     * Mismos valores por defecto que la tabla, para el registro recién creado.
+     */
+    protected $attributes = [
+        'receipt_width' => 80,
+    ];
+
     protected function casts(): array
     {
         return [
-            'value' => 'json',
+            'hours' => 'array',
+            'receipt_width' => 'integer',
         ];
     }
 
     /**
-     * Lee un valor de configuración, p. ej. Setting::get('business.name').
+     * Ajustes vigentes, o null si todavía no se han guardado.
      */
-    public static function get(string $key, mixed $default = null): mixed
+    public static function current(): ?self
     {
-        return static::where('key', $key)->value('value') ?? $default;
-    }
-
-    public static function set(string $key, mixed $value): void
-    {
-        static::updateOrCreate(['key' => $key], ['value' => $value]);
+        return static::query()->first();
     }
 }
