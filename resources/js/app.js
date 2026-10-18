@@ -2,9 +2,11 @@
 import ApexCharts from 'apexcharts';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import Swal from 'sweetalert2';
 
 window.ApexCharts = ApexCharts;
 window.flatpickr = flatpickr;
+window.Swal = Swal;
 
 // Gráficas del dashboard: solo se cargan si su contenedor existe en la página
 document.addEventListener('DOMContentLoaded', () => {
