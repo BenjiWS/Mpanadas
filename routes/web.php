@@ -5,6 +5,8 @@ use App\Livewire\Contador;
 use App\Livewire\Dashboard;
 use App\Livewire\Productos;
 use App\Livewire\Profile;
+use App\Livewire\Roles\CrudRole;
+use App\Livewire\Roles\RolesTable;
 use App\Livewire\Users\CrudUser;
 use App\Livewire\Users\UsersTable;
 use Illuminate\Support\Facades\Route;
@@ -25,4 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/users', UsersTable::class)->name('users')->middleware('permission:get users');
     Route::livewire('/users/create', CrudUser::class)->name('users.create')->middleware('permission:create users');
     Route::livewire('/users/{user}/edit', CrudUser::class)->name('users.edit')->middleware('permission:edit users');
+
+    Route::livewire('/roles', RolesTable::class)->name('roles')->middleware('permission:get roles');
+    Route::livewire('/roles/create', CrudRole::class)->name('roles.create')->middleware('permission:create roles');
+    Route::livewire('/roles/{role}/edit', CrudRole::class)->name('roles.edit')->middleware('permission:edit roles');
 });
