@@ -6,25 +6,26 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['category_id', 'name', 'description', 'image', 'price', 'is_active', 'is_featured'])]
+#[Fillable(['name', 'price', 'image', 'available'])]
 class Product extends Model
 {
+    use SoftDeletes;
+
     protected function casts(): array
     {
         return [
             'price' => 'decimal:2',
-            'is_active' => 'boolean',
-            'is_featured' => 'boolean',
+            'available' => 'boolean',
         ];
     }
 
-    public function category(): BelongsTo
+    public function categories(): BelongsToMany
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsToMany(Category::class, 'categories_products')->withTimestamps();
     }
 
     /**
@@ -43,9 +44,14 @@ class Product extends Model
         return $this->belongsToMany(Ingredient::class, 'product_extras');
     }
 
+    public function combos(): BelongsToMany
+    {
+        return $this->belongsToMany(Combo::class, 'combos_products')->withTimestamps();
+    }
+
     public function offers(): BelongsToMany
     {
-        return $this->belongsToMany(Offer::class);
+        return $this->belongsToMany(Offer::class, 'offers_products')->withTimestamps();
     }
 
     public function saleItems(): HasMany
@@ -53,15 +59,12 @@ class Product extends Model
         return $this->hasMany(SaleItem::class);
     }
 
+    /**
+     * Productos que no están agotados.
+     */
     #[Scope]
-    protected function active(Builder $query): void
+    protected function available(Builder $query): void
     {
-        $query->where('is_active', true);
-    }
-
-    #[Scope]
-    protected function featured(Builder $query): void
-    {
-        $query->where('is_featured', true);
+        $query->where('available', true);
     }
 }

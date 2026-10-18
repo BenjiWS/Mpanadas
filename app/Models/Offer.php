@@ -9,10 +9,13 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['name', 'description', 'image', 'discount_type', 'discount_value', 'starts_at', 'ends_at', 'is_active'])]
+#[Fillable(['name', 'description', 'image', 'discount_type', 'discount_value', 'starts_at', 'ends_at', 'active'])]
 class Offer extends Model
 {
+    use SoftDeletes;
+
     protected function casts(): array
     {
         return [
@@ -20,13 +23,23 @@ class Offer extends Model
             'discount_value' => 'decimal:2',
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
-            'is_active' => 'boolean',
+            'active' => 'boolean',
         ];
     }
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class, 'offers_products')->withTimestamps();
+    }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'offers_categories')->withTimestamps();
+    }
+
+    public function combos(): BelongsToMany
+    {
+        return $this->belongsToMany(Combo::class, 'offers_combos')->withTimestamps();
     }
 
     public function saleItems(): HasMany
@@ -40,7 +53,7 @@ class Offer extends Model
     #[Scope]
     protected function current(Builder $query): void
     {
-        $query->where('is_active', true)
+        $query->where('active', true)
             ->where('starts_at', '<=', now())
             ->where('ends_at', '>=', now());
     }

@@ -13,14 +13,18 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            // Una categoría con productos asignados no se puede eliminar.
-            $table->foreignId('category_id')->constrained()->restrictOnDelete();
-            $table->string('name')->index();
-            $table->text('description')->nullable();
-            $table->string('image')->nullable();
-            $table->decimal('price', 10, 2);
-            $table->boolean('is_active')->default(true);
-            $table->boolean('is_featured')->default(false);
+            $table->string('name');
+            $table->decimal('price', 8, 2);
+            $table->string('image')->nullable(); // ruta en el disco public
+            $table->boolean('available')->default(true); // permite marcar un producto como agotado sin borrarlo
+            $table->softDeletes();
+            $table->timestamps();
+        });
+
+        Schema::create('categories_products', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -30,6 +34,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('categories_products');
         Schema::dropIfExists('products');
     }
 };
