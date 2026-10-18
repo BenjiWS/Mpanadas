@@ -1,4 +1,6 @@
-<form wire:submit="{{ $action }}" class="space-y-6">
+@php($submit = $action === 'store' ? 'store' : 'update')
+
+<form wire:submit="{{ $submit }}" class="space-y-6">
     <x-common.page-band :title="$title">
         <x-slot:subtitle>
             {{ $action === 'store' ? 'Crea el acceso de una persona al sistema.' : 'Actualiza los datos y el acceso de este usuario.' }}
@@ -8,10 +10,10 @@
                 class="rounded-lg px-4 py-2 text-base text-gray-700 transition hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-gray-300">
                 Cancelar
             </a>
-            <button type="submit" wire:loading.attr="disabled" wire:target="{{ $action }}"
+            <button type="submit" wire:loading.attr="disabled" wire:target="{{ $submit }}"
                 class="inline-flex items-center gap-2 rounded-lg border border-brand-500 bg-white/60 px-4 py-2 text-base font-medium text-brand-700 transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 active:scale-[0.98] disabled:opacity-60 dark:bg-transparent dark:text-brand-300 dark:hover:bg-white/5">
-                <span wire:loading.remove wire:target="{{ $action }}">{{ $action === 'store' ? 'Crear usuario' : 'Guardar cambios' }}</span>
-                <span wire:loading wire:target="{{ $action }}">Guardando…</span>
+                <span wire:loading.remove wire:target="{{ $submit }}">{{ $action === 'store' ? 'Crear usuario' : 'Guardar cambios' }}</span>
+                <span wire:loading wire:target="{{ $submit }}">Guardando…</span>
             </button>
         </x-slot:actions>
     </x-common.page-band>

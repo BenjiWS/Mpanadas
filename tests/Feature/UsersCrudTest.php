@@ -82,6 +82,17 @@ class UsersCrudTest extends TestCase
             ->assertHasErrors(['username' => 'regex']);
     }
 
+    public function test_form_submits_to_the_right_method(): void
+    {
+        $user = User::factory()->create()->assignRole('Cajero');
+
+        Livewire::actingAs($this->admin)->test(CrudUser::class)
+            ->assertSeeHtml('wire:submit="store"');
+
+        Livewire::actingAs($this->admin)->test(CrudUser::class, ['user' => $user])
+            ->assertSeeHtml('wire:submit="update"');
+    }
+
     public function test_update_keeps_password_when_blank(): void
     {
         $user = User::factory()->create()->assignRole('Cajero');
