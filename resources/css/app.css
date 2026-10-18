@@ -1312,3 +1312,8 @@ pre code,
   text-align: left !important;
   unicode-bidi: isolate;
 }
+
+/* SweetAlert2: su z-index (1060) queda debajo del header y el sidebar (z-99999) */
+.swal2-container {
+  z-index: 999999 !important;
+}

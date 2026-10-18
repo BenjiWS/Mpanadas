@@ -29,14 +29,16 @@ class AuthTest extends TestCase
     public function test_users_can_register(): void
     {
         $this->post('/register', [
-            'name' => 'Ana Pérez',
+            'name' => 'Ana',
+            'lastname' => 'Pérez',
+            'username' => 'anaperez',
             'email' => 'ana@example.com',
             'password' => 'password-segura-123',
             'password_confirmation' => 'password-segura-123',
         ])->assertRedirect('/dashboard');
 
         $this->assertAuthenticated();
-        $this->assertDatabaseHas('users', ['email' => 'ana@example.com']);
+        $this->assertDatabaseHas('users', ['email' => 'ana@example.com', 'username' => 'anaperez']);
     }
 
     public function test_users_can_login_and_logout(): void
