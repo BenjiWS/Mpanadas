@@ -5,6 +5,8 @@ use App\Livewire\Contador;
 use App\Livewire\Dashboard;
 use App\Livewire\Productos;
 use App\Livewire\Profile;
+use App\Livewire\Users\CrudUser;
+use App\Livewire\Users\UsersTable;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,4 +21,8 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/profile', Profile::class)->name('profile');
     Route::livewire('/productos', Productos::class)->name('productos');
     Route::livewire('/combos', Combos::class)->name('combos');
+
+    Route::livewire('/users', UsersTable::class)->name('users')->middleware('permission:get users');
+    Route::livewire('/users/create', CrudUser::class)->name('users.create')->middleware('permission:create users');
+    Route::livewire('/users/{user}/edit', CrudUser::class)->name('users.edit')->middleware('permission:edit users');
 });
