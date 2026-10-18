@@ -19,9 +19,9 @@
             <h2 id="listado-titulo" class="text-lg font-semibold text-gray-800 dark:text-white/90">Listado</h2>
 
             <label class="relative block sm:w-72">
-                <span class="sr-only">Buscar por nombre, correo o rol</span>
+                <span class="sr-only">Buscar por nombre, username, correo o rol</span>
                 <svg class="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
-                <input type="search" wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre, correo o rol…" autocomplete="off"
+                <input type="search" wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre, username, correo o rol…" autocomplete="off"
                     class="h-11 w-full rounded-lg border border-gray-300 bg-transparent pr-4 pl-10 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/15 focus:outline-hidden dark:border-gray-700 dark:text-white/90 dark:placeholder:text-gray-500" />
             </label>
         </div>
@@ -37,7 +37,7 @@
                     <p class="mt-1 max-w-sm text-sm text-gray-500 dark:text-gray-400">Crea un usuario para cada persona que use el sistema.</p>
                 @else
                     <h3 class="mt-4 text-base font-semibold text-gray-800 dark:text-white/90">Ningún usuario coincide con «{{ $search }}»</h3>
-                    <p class="mt-1 max-w-sm text-sm text-gray-500 dark:text-gray-400">Prueba con otro nombre, correo o rol.</p>
+                    <p class="mt-1 max-w-sm text-sm text-gray-500 dark:text-gray-400">Prueba con otro nombre, username, correo o rol.</p>
                     <button type="button" wire:click="$set('search', '')"
                         class="mt-4 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-white/5">
                         Limpiar búsqueda
@@ -46,10 +46,12 @@
             </div>
         @else
             <div class="custom-scrollbar overflow-x-auto" wire:loading.class="opacity-60" wire:target="search,sortBy,gotoPage">
-                <table class="w-full min-w-[760px] text-left">
+                <table class="w-full min-w-[980px] text-left">
                     <thead>
                         <tr class="border-y border-gray-200 bg-gray-50 text-theme-xs font-medium text-gray-500 dark:border-gray-800 dark:bg-white/[0.02] dark:text-gray-400">
                             <x-sortable-th field="name" :sort-field="$sortField" :sort-direction="$sortDirection" class="pl-5 sm:pl-6">Nombre</x-sortable-th>
+                            <x-sortable-th field="lastname" :sort-field="$sortField" :sort-direction="$sortDirection">Apellido</x-sortable-th>
+                            <x-sortable-th field="username" :sort-field="$sortField" :sort-direction="$sortDirection">Username</x-sortable-th>
                             <x-sortable-th field="email" :sort-field="$sortField" :sort-direction="$sortDirection">Correo</x-sortable-th>
                             <th scope="col" class="px-3 py-3 font-medium">Rol</th>
                             <th scope="col" class="px-3 py-3 font-medium">Estado</th>
@@ -73,6 +75,8 @@
                                         </span>
                                     </div>
                                 </td>
+                                <td class="px-3 py-3 text-sm text-gray-800 dark:text-white/90">{{ $user->lastname }}</td>
+                                <td class="px-3 py-3 font-mono text-sm text-gray-600 dark:text-gray-400">{{ $user->username }}</td>
                                 <td class="px-3 py-3 text-sm text-gray-600 dark:text-gray-400">{{ $user->email }}</td>
                                 <td class="px-3 py-3">
                                     @if ($role = $user->roles->first())

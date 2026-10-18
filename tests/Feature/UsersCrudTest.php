@@ -44,7 +44,9 @@ class UsersCrudTest extends TestCase
         $cajero = Role::findByName('Cajero');
 
         Livewire::actingAs($this->admin)->test(CrudUser::class)
-            ->set('name', 'Lucía Gómez')
+            ->set('name', 'Lucía')
+            ->set('lastname', 'Gómez')
+            ->set('username', 'lucia_gomez')
             ->set('email', 'lucia@mempanadas.test')
             ->set('password', 'secreto123')
             ->set('role_id', $cajero->id)
@@ -53,6 +55,8 @@ class UsersCrudTest extends TestCase
             ->assertDispatched('swalmodal');
 
         $user = User::where('email', 'lucia@mempanadas.test')->firstOrFail();
+        $this->assertSame('Gómez', $user->lastname);
+        $this->assertSame('lucia_gomez', $user->username);
         $this->assertTrue($user->hasRole('Cajero'));
         $this->assertTrue(Hash::check('secreto123', $user->password));
     }
@@ -61,8 +65,21 @@ class UsersCrudTest extends TestCase
     {
         Livewire::actingAs($this->admin)->test(CrudUser::class)
             ->set('email', $this->admin->email)
+            ->set('username', $this->admin->username)
             ->call('store')
-            ->assertHasErrors(['name' => 'required', 'email' => 'unique', 'password' => 'required', 'role_id' => 'required']);
+            ->assertHasErrors([
+                'name' => 'required',
+                'lastname' => 'required',
+                'username' => 'unique',
+                'email' => 'unique',
+                'password' => 'required',
+                'role_id' => 'required',
+            ]);
+
+        Livewire::actingAs($this->admin)->test(CrudUser::class)
+            ->set('username', 'con espacios')
+            ->call('store')
+            ->assertHasErrors(['username' => 'regex']);
     }
 
     public function test_update_keeps_password_when_blank(): void
@@ -72,6 +89,7 @@ class UsersCrudTest extends TestCase
 
         Livewire::actingAs($this->admin)->test(CrudUser::class, ['user' => $user])
             ->assertSet('action', 'edit')
+            ->assertSet('username', $user->username)
             ->set('name', 'Nombre nuevo')
             ->set('role_id', Role::findByName('Supervisor')->id)
             ->call('update')

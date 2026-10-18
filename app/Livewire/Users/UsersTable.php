@@ -21,7 +21,7 @@ class UsersTable extends Component
 
     protected function sortableColumns(): array
     {
-        return ['name', 'email', 'created_at'];
+        return ['name', 'lastname', 'username', 'email', 'created_at'];
     }
 
     protected function defaultSort(): array
@@ -74,6 +74,8 @@ class UsersTable extends Component
         return view('livewire.users.users-table', [
             'users' => $this->applySorting(User::with('roles')->where(function ($query) {
                 $query->where('name', 'LIKE', "%{$this->search}%")
+                    ->orWhere('lastname', 'LIKE', "%{$this->search}%")
+                    ->orWhere('username', 'LIKE', "%{$this->search}%")
                     ->orWhere('email', 'LIKE', "%{$this->search}%")
                     ->orWhereHas('roles', function ($q) {
                         $q->where('name', 'LIKE', "%{$this->search}%");

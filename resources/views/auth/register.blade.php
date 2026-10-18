@@ -7,7 +7,13 @@
     <form method="POST" action="{{ route('register') }}" class="space-y-5">
         @csrf
 
-        <x-form.input name="name" label="Nombre" :value="old('name')" placeholder="Tu nombre" required autofocus autocomplete="name" />
+        <div class="grid gap-5 sm:grid-cols-2">
+            <x-form.input name="name" label="Nombre" :value="old('name')" placeholder="Tu nombre" required autofocus autocomplete="given-name" />
+
+            <x-form.input name="lastname" label="Apellido" :value="old('lastname')" placeholder="Tu apellido" required autocomplete="family-name" />
+        </div>
+
+        <x-form.input name="username" label="Usuario" :value="old('username')" placeholder="Letras, números, punto, - o _" required autocomplete="off" />
 
         <x-form.input name="email" type="email" label="Email" :value="old('email')" placeholder="tu@email.com" required autocomplete="username" />
 

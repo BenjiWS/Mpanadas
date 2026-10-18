@@ -23,6 +23,10 @@ class CrudUser extends Component
 
     public $name;
 
+    public $lastname;
+
+    public $username;
+
     public $email;
 
     public $password;
@@ -38,6 +42,8 @@ class CrudUser extends Component
     {
         $rules = [
             'name' => ['required', 'string', 'max:255'],
+            'lastname' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'regex:/^[A-Za-z0-9._-]+$/', 'max:50', Rule::unique('users', 'username')],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
             'password' => ['required', 'string', 'min:8'],
             'role_id' => $this->roleRules(),
@@ -45,6 +51,7 @@ class CrudUser extends Component
         ];
 
         if ($this->action === 'edit') {
+            $rules['username'] = ['required', 'string', 'regex:/^[A-Za-z0-9._-]+$/', 'max:50', Rule::unique('users', 'username')->ignore($this->user_id)];
             $rules['email'] = ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->user_id)];
             $rules['password'] = ['nullable', 'string', 'min:8'];
         }
@@ -92,6 +99,10 @@ class CrudUser extends Component
     {
         return [
             'name.required' => __('Debe ingresar el nombre'),
+            'lastname.required' => __('Debe ingresar el apellido'),
+            'username.required' => __('Debe ingresar el username'),
+            'username.regex' => __('El username solo puede tener letras, números, puntos, guiones y guiones bajos'),
+            'username.unique' => __('El username ya ha sido registrado'),
             'email.required' => __('Debe ingresar el correo'),
             'email.email' => __('Ingrese un correo válido'),
             'email.unique' => __('El correo ya ha sido registrado'),
@@ -110,6 +121,8 @@ class CrudUser extends Component
             $this->action = 'edit';
             $this->user_id = $user->id;
             $this->name = $user->name;
+            $this->lastname = $user->lastname;
+            $this->username = $user->username;
             $this->email = $user->email;
             $this->password = null;
             $this->role_id = $user->roles->first()?->id;
@@ -141,6 +154,8 @@ class CrudUser extends Component
 
             $user = User::create([
                 'name' => $data['name'],
+                'lastname' => $data['lastname'],
+                'username' => $data['username'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
                 'is_active' => $data['is_active'],
@@ -181,6 +196,8 @@ class CrudUser extends Component
 
             $userData = [
                 'name' => $data['name'],
+                'lastname' => $data['lastname'],
+                'username' => $data['username'],
                 'email' => $data['email'],
                 // Uno mismo no se puede desactivar: se quedaría fuera del sistema.
                 'is_active' => $this->isSelf() ? true : $data['is_active'],

@@ -22,8 +22,14 @@
             <h2 id="datos-titulo" class="text-lg font-semibold text-gray-800 dark:text-white/90">Datos del usuario</h2>
 
             <div class="mt-5 space-y-5">
-                <x-form.input name="name" label="Nombre" wire:model="name" required autocomplete="off" />
-                <x-form.input name="email" type="email" label="Correo" wire:model="email" required autocomplete="off" />
+                <div class="grid gap-5 sm:grid-cols-2">
+                    <x-form.input name="name" label="Nombre" wire:model="name" required autocomplete="off" />
+                    <x-form.input name="lastname" label="Apellido" wire:model="lastname" required autocomplete="off" />
+                </div>
+                <div class="grid gap-5 sm:grid-cols-2">
+                    <x-form.input name="username" label="Username" wire:model="username" required autocomplete="off" />
+                    <x-form.input name="email" type="email" label="Correo" wire:model="email" required autocomplete="off" />
+                </div>
 
                 <div>
                     <x-form.input name="password" type="password" label="Contraseña" wire:model="password" :required="$action === 'store'" autocomplete="new-password" />
