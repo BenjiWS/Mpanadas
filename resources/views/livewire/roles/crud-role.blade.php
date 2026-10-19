@@ -40,7 +40,7 @@
             @enderror
         </div>
 
-        <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div class="grid gap-6 sm:grid-cols-[repeat(auto-fill,minmax(17rem,21rem))]">
             @foreach ($groups as $type => $permissions)
                 @php
                     $selected = collect($permission_id)->map(fn ($id) => (int) $id);
@@ -48,7 +48,7 @@
                     $allSelected = $granted === $permissions->count();
                 @endphp
 
-                <div wire:key="group-{{ $type }}" role="group" aria-labelledby="group-{{ $type }}-title" class="rounded-xl border border-gray-200 bg-white p-5 sm:p-6 dark:border-gray-800 dark:bg-white/[0.03]">
+                <div wire:key="group-{{ $type }}" role="group" aria-labelledby="group-{{ $type }}-title" class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
                     <div class="flex items-start justify-between gap-3">
                         <div>
                             <h3 id="group-{{ $type }}-title" class="text-base font-semibold text-gray-800 dark:text-white/90">{{ $permissions->first()->type_description }}</h3>
