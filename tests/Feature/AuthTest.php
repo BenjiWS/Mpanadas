@@ -91,6 +91,7 @@ class AuthTest extends TestCase
         Livewire::actingAs($user)->test(Profile::class)
             ->set('name', 'Nombre Nuevo')
             ->set('lastname', 'Apellido Nuevo')
+            ->set('username', 'nuevo.usuario')
             ->set('email', 'nuevo@example.com')
             ->call('updateProfile')
             ->assertHasNoErrors()
@@ -98,7 +99,19 @@ class AuthTest extends TestCase
 
         $this->assertSame('Nombre Nuevo', $user->fresh()->name);
         $this->assertSame('Apellido Nuevo', $user->fresh()->lastname);
+        $this->assertSame('nuevo.usuario', $user->fresh()->username);
         $this->assertSame('nuevo@example.com', $user->fresh()->email);
+    }
+
+    public function test_profile_username_must_be_unique(): void
+    {
+        User::factory()->create(['username' => 'ocupado']);
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)->test(Profile::class)
+            ->set('username', 'ocupado')
+            ->call('updateProfile')
+            ->assertHasErrors('username');
     }
 
     public function test_password_can_be_updated(): void

@@ -14,6 +14,8 @@ class Profile extends Component
 
     public string $lastname = '';
 
+    public string $username = '';
+
     public string $email = '';
 
     /** Muestra u oculta el formulario para cambiar la contraseña */
@@ -29,11 +31,12 @@ class Profile extends Component
     {
         $this->name = auth()->user()->name;
         $this->lastname = auth()->user()->lastname ?? '';
+        $this->username = auth()->user()->username ?? '';
         $this->email = auth()->user()->email;
     }
 
     /**
-     * Actualiza nombre, apellido y email usando la acción de Fortify (app/Actions/Fortify).
+     * Actualiza nombre, apellido, username y email usando la acción de Fortify (app/Actions/Fortify).
      */
     public function updateProfile(UpdatesUserProfileInformation $updater): void
     {
@@ -42,6 +45,7 @@ class Profile extends Component
         $updater->update(auth()->user(), [
             'name' => $this->name,
             'lastname' => $this->lastname,
+            'username' => $this->username,
             'email' => $this->email,
         ]);
 

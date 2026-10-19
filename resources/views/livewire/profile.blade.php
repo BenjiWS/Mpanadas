@@ -24,13 +24,19 @@
                     <x-form.input name="name" label="Nombre" wire:model="name" required autocomplete="given-name" />
                     <x-form.input name="lastname" label="Apellido" wire:model="lastname" required autocomplete="family-name" />
                 </div>
-                <x-form.input name="email" type="email" label="Correo electrónico" wire:model="email" required autocomplete="email" />
-            </form>
+                <div class="grid gap-5 sm:grid-cols-2">
+                    <x-form.input name="username" label="Username" wire:model="username" required autocomplete="username" />
+                    <x-form.input name="email" type="email" label="Correo electrónico" wire:model="email" required autocomplete="email" />
+                </div>
 
-            <p class="mt-6 text-sm text-gray-600 dark:text-gray-400">
-                Usuario: <span class="font-mono text-gray-800 dark:text-white/90">{{ auth()->user()->username }}</span>
-                · Rol: <span class="text-gray-800 dark:text-white/90">{{ auth()->user()->getRoleNames()->first() ?? 'Sin rol' }}</span>
-            </p>
+                {{-- Solo lectura: el rol lo asigna un administrador desde Usuarios --}}
+                <div>
+                    <label for="role" class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Rol</label>
+                    <input id="role" type="text" value="{{ auth()->user()->getRoleNames()->first() ?? 'Sin rol' }}" readonly aria-describedby="role-help"
+                        class="h-11 w-full cursor-default rounded-lg border border-gray-200 bg-gray-100 px-4 text-sm text-gray-600 focus:outline-hidden dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400" />
+                    <p id="role-help" class="mt-1.5 text-theme-xs text-gray-500 dark:text-gray-400">Solo un administrador puede cambiar tu rol.</p>
+                </div>
+            </form>
         </section>
 
         {{-- Seguridad de la cuenta --}}
