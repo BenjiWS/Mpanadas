@@ -39,8 +39,20 @@ class RolesCrudTest extends TestCase
         $this->actingAs($cajero)->get('/roles')->assertForbidden();
         $this->actingAs($cajero)->get('/roles/create')->assertForbidden();
 
-        $this->actingAs($this->admin)->get('/roles')->assertOk()->assertSee('Supervisor')->assertSee('1 de 5');
+        $this->actingAs($this->admin)->get('/roles')->assertOk()->assertSee('Supervisor')->assertSee('Supervisa la operación y al equipo');
         $this->actingAs($this->admin)->get('/roles/create')->assertOk()->assertSee('Visualizar Usuarios');
+    }
+
+    public function test_filters_roles_in_use_and_without_permissions(): void
+    {
+        // Administrador tiene un usuario; Cajero no tiene permisos.
+        Livewire::actingAs($this->admin)->test(RolesTable::class)
+            ->call('setFilter', 'en_uso')
+            ->assertSee('Administrador')
+            ->assertDontSee('Atención y operación diaria')
+            ->call('setFilter', 'sin_permisos')
+            ->assertSee('Atención y operación diaria')
+            ->assertDontSee('Control completo del negocio');
     }
 
     public function test_store_creates_role_with_permissions(): void

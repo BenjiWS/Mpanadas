@@ -19,8 +19,17 @@ class RolesTable extends Component
 
     public $search = '';
 
+    /** todos | en_uso (con usuarios asignados) | sin_permisos */
+    public $filter = 'todos';
+
     public function updatingSearch()
     {
+        $this->resetPage();
+    }
+
+    public function setFilter(string $filter)
+    {
+        $this->filter = in_array($filter, ['todos', 'en_uso', 'sin_permisos'], true) ? $filter : 'todos';
         $this->resetPage();
     }
 
@@ -30,10 +39,12 @@ class RolesTable extends Component
             'roles' => Role::with('permissions')
                 ->withCount('users')
                 ->where('name', 'LIKE', "%{$this->search}%")
+                ->when($this->filter === 'en_uso', fn ($query) => $query->has('users'))
+                ->when($this->filter === 'sin_permisos', fn ($query) => $query->doesntHave('permissions'))
                 ->orderBy('name')
                 ->paginate(9),
-            // Permisos agrupados por módulo, para mostrar en cada tarjeta qué módulos cubre el rol.
-            'groups' => Permission::all()->groupBy('type'),
+            // Nombre visible de cada módulo, para listar en la tarjeta los módulos a los que el rol tiene acceso.
+            'groups' => Permission::all()->groupBy('type')->map(fn ($permissions) => $permissions->first()->type_description),
         ]);
     }
 
