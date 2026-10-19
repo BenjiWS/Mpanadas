@@ -78,11 +78,14 @@ class AuthTest extends TestCase
 
         Livewire::actingAs($user)->test(Profile::class)
             ->set('name', 'Nombre Nuevo')
+            ->set('lastname', 'Apellido Nuevo')
             ->set('email', 'nuevo@example.com')
             ->call('updateProfile')
-            ->assertHasNoErrors();
+            ->assertHasNoErrors()
+            ->assertDispatched('swalmodal');
 
         $this->assertSame('Nombre Nuevo', $user->fresh()->name);
+        $this->assertSame('Apellido Nuevo', $user->fresh()->lastname);
         $this->assertSame('nuevo@example.com', $user->fresh()->email);
     }
 
@@ -91,12 +94,16 @@ class AuthTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)->test(Profile::class)
+            ->call('togglePasswordForm')
+            ->assertSet('changingPassword', true)
             ->set('current_password', 'password')
             ->set('password', 'nueva-password-123')
             ->set('password_confirmation', 'nueva-password-123')
             ->call('updatePassword')
             ->assertHasNoErrors()
-            ->assertSet('password', '');
+            ->assertSet('password', '')
+            ->assertSet('changingPassword', false)
+            ->assertDispatched('swalmodal');
 
         $this->assertTrue(Hash::check('nueva-password-123', $user->fresh()->password));
     }

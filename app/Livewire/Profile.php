@@ -12,7 +12,12 @@ class Profile extends Component
 {
     public string $name = '';
 
+    public string $lastname = '';
+
     public string $email = '';
+
+    /** Muestra u oculta el formulario para cambiar la contraseña */
+    public bool $changingPassword = false;
 
     public string $current_password = '';
 
@@ -23,11 +28,12 @@ class Profile extends Component
     public function mount(): void
     {
         $this->name = auth()->user()->name;
+        $this->lastname = auth()->user()->lastname ?? '';
         $this->email = auth()->user()->email;
     }
 
     /**
-     * Actualiza nombre y email usando la acción de Fortify (app/Actions/Fortify).
+     * Actualiza nombre, apellido y email usando la acción de Fortify (app/Actions/Fortify).
      */
     public function updateProfile(UpdatesUserProfileInformation $updater): void
     {
@@ -35,10 +41,22 @@ class Profile extends Component
 
         $updater->update(auth()->user(), [
             'name' => $this->name,
+            'lastname' => $this->lastname,
             'email' => $this->email,
         ]);
 
-        session()->flash('profile-status', 'Perfil actualizado.');
+        $this->dispatch('swalmodal',
+            type: 'success',
+            title: __('¡Completado!'),
+            text: __('Perfil actualizado.'),
+        );
+    }
+
+    public function togglePasswordForm(): void
+    {
+        $this->changingPassword = ! $this->changingPassword;
+        $this->reset('current_password', 'password', 'password_confirmation');
+        $this->resetErrorBag();
     }
 
     /**
@@ -54,9 +72,13 @@ class Profile extends Component
             'password_confirmation' => $this->password_confirmation,
         ]);
 
-        $this->reset('current_password', 'password', 'password_confirmation');
+        $this->reset('current_password', 'password', 'password_confirmation', 'changingPassword');
 
-        session()->flash('password-status', 'Contraseña actualizada.');
+        $this->dispatch('swalmodal',
+            type: 'success',
+            title: __('¡Completado!'),
+            text: __('Contraseña actualizada.'),
+        );
     }
 
     public function render()
