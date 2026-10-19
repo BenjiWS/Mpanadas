@@ -72,6 +72,18 @@ class AuthTest extends TestCase
             ->assertSee('BR');
     }
 
+    public function test_profile_page_shows_account_details(): void
+    {
+        $user = User::factory()->create(['username' => 'benji']);
+
+        $this->actingAs($user)->get('/profile')
+            ->assertOk()
+            ->assertSee('Información personal')
+            ->assertSee('benji')
+            ->assertSee('Sin rol')
+            ->assertSee('Cerrar sesión');
+    }
+
     public function test_profile_information_can_be_updated(): void
     {
         $user = User::factory()->create();
