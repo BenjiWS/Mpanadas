@@ -72,18 +72,46 @@ class AuthTest extends TestCase
             ->assertSee('BR');
     }
 
+    public function test_profile_page_shows_account_details(): void
+    {
+        $user = User::factory()->create(['username' => 'benji']);
+
+        $this->actingAs($user)->get('/profile')
+            ->assertOk()
+            ->assertSee('Información personal')
+            ->assertSee('benji')
+            ->assertSee('Sin rol')
+            ->assertSee('Cerrar sesión');
+    }
+
     public function test_profile_information_can_be_updated(): void
     {
         $user = User::factory()->create();
 
         Livewire::actingAs($user)->test(Profile::class)
             ->set('name', 'Nombre Nuevo')
+            ->set('lastname', 'Apellido Nuevo')
+            ->set('username', 'nuevo.usuario')
             ->set('email', 'nuevo@example.com')
             ->call('updateProfile')
-            ->assertHasNoErrors();
+            ->assertHasNoErrors()
+            ->assertDispatched('swalmodal');
 
         $this->assertSame('Nombre Nuevo', $user->fresh()->name);
+        $this->assertSame('Apellido Nuevo', $user->fresh()->lastname);
+        $this->assertSame('nuevo.usuario', $user->fresh()->username);
         $this->assertSame('nuevo@example.com', $user->fresh()->email);
+    }
+
+    public function test_profile_username_must_be_unique(): void
+    {
+        User::factory()->create(['username' => 'ocupado']);
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)->test(Profile::class)
+            ->set('username', 'ocupado')
+            ->call('updateProfile')
+            ->assertHasErrors('username');
     }
 
     public function test_password_can_be_updated(): void
@@ -91,12 +119,16 @@ class AuthTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)->test(Profile::class)
+            ->call('togglePasswordForm')
+            ->assertSet('changingPassword', true)
             ->set('current_password', 'password')
             ->set('password', 'nueva-password-123')
             ->set('password_confirmation', 'nueva-password-123')
             ->call('updatePassword')
             ->assertHasNoErrors()
-            ->assertSet('password', '');
+            ->assertSet('password', '')
+            ->assertSet('changingPassword', false)
+            ->assertDispatched('swalmodal');
 
         $this->assertTrue(Hash::check('nueva-password-123', $user->fresh()->password));
     }
