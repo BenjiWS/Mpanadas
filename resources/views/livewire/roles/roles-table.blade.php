@@ -54,12 +54,12 @@
             @endif
         </div>
     @else
-        <div class="grid gap-7 md:grid-cols-2 xl:grid-cols-3" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage">
+        <div class="grid gap-6 sm:grid-cols-[repeat(auto-fill,minmax(17rem,21rem))]" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage">
             @foreach ($roles as $role)
                 @php($types = $role->permissions->pluck('type')->unique())
 
                 <article wire:key="role-{{ $role->id }}" aria-labelledby="role-{{ $role->id }}-name"
-                    class="flex flex-col rounded-xl border border-gray-400/70 p-7 dark:border-gray-700">
+                    class="flex flex-col rounded-xl border border-gray-400/70 p-6 dark:border-gray-700">
                     <span class="self-start rounded-full bg-brand-100 px-3 py-1 text-sm font-semibold text-brand-600 tabular-nums dark:bg-brand-500/15 dark:text-brand-300">
                         {{ $role->users_count }} {{ $role->users_count === 1 ? 'usuario' : 'usuarios' }}
                     </span>
