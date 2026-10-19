@@ -89,7 +89,7 @@
                             @can('edit roles')
                                 <button type="button" wire:click="edit({{ $role->id }})"
                                     aria-label="Editar permisos de {{ $role->name }}"
-                                    class="rounded-lg border border-gray-400/70 bg-white/40 px-6 py-3 text-base font-semibold text-gray-800 transition hover:bg-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 active:scale-[0.98] dark:border-gray-700 dark:bg-transparent dark:text-white/90 dark:hover:bg-white/5">
+                                    class="rounded-lg border border-gray-400/70 bg-white/40 px-4 py-2 text-sm font-semibold text-gray-800 transition hover:bg-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 active:scale-[0.98] dark:border-gray-700 dark:bg-transparent dark:text-white/90 dark:hover:bg-white/5">
                                     Editar permisos
                                 </button>
                             @endcan
