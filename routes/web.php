@@ -1,5 +1,7 @@
 <?php
 
+use App\Livewire\Categories\CategoriesTable;
+use App\Livewire\Categories\CrudCategory;
 use App\Livewire\Combos;
 use App\Livewire\Contador;
 use App\Livewire\Dashboard;
@@ -23,6 +25,10 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/profile', Profile::class)->name('profile');
     Route::livewire('/productos', Productos::class)->name('productos');
     Route::livewire('/combos', Combos::class)->name('combos');
+
+    Route::livewire('/categories', CategoriesTable::class)->name('categories')->middleware('permission:get categories');
+    Route::livewire('/categories/create', CrudCategory::class)->name('categories.create')->middleware('permission:create categories');
+    Route::livewire('/categories/{category}/edit', CrudCategory::class)->name('categories.edit')->middleware('permission:edit categories');
 
     Route::livewire('/users', UsersTable::class)->name('users')->middleware('permission:get users');
     Route::livewire('/users/create', CrudUser::class)->name('users.create')->middleware('permission:create users');

@@ -31,7 +31,7 @@ class MenuHelper
                 'items' => [
                     ['icon' => 'empanada', 'name' => 'Productos', 'path' => '/productos'],
                     ['icon' => 'combo', 'name' => 'Combos', 'path' => '/combos'],
-                    ['icon' => 'category', 'name' => 'Categorías', 'path' => null],
+                    ['icon' => 'category', 'name' => 'Categorías', 'path' => '/categories'],
                     ['icon' => 'leaf', 'name' => 'Ingredientes', 'path' => null],
                     ['icon' => 'tag', 'name' => 'Ofertas', 'path' => null],
                 ],
