@@ -21,6 +21,11 @@ class PermissionSeeder extends Seeder
         $type_model = config('constants.type_model');
         $type_description = config('constants.type_description');
 
+        Permission::create(['name' => 'get categories', 'description' => 'Visualizar Categorias', 'type' => $type_model['Categories'], 'type_description' => $type_description['Categorias']]);
+        Permission::create(['name' => 'create categories', 'description' => 'Registrar Categorias', 'type' => $type_model['Categories'], 'type_description' => $type_description['Categorias']]);
+        Permission::create(['name' => 'edit categories', 'description' => 'Editar Categorias', 'type' => $type_model['Categories'], 'type_description' => $type_description['Categorias']]);
+        Permission::create(['name' => 'delete categories', 'description' => 'Borrar Categorias', 'type' => $type_model['Categories'], 'type_description' => $type_description['Categorias']]);
+
         Permission::create(['name' => 'get users', 'description' => 'Visualizar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
         Permission::create(['name' => 'create users', 'description' => 'Registrar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
         Permission::create(['name' => 'edit users', 'description' => 'Editar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
@@ -41,6 +46,12 @@ class PermissionSeeder extends Seeder
         $supervisor = Role::findByName('Supervisor', 'web');
 
         $supervisor->givePermissionTo([
+            // Categorías: todos los permisos
+            'get categories',
+            'create categories',
+            'edit categories',
+            'delete categories',
+
             // Usuarios: solo visualización
             'get users',
         ]);
