@@ -40,7 +40,7 @@ class MenuHelper
                 'title' => 'Administración',
                 'items' => [
                     ['icon' => 'users', 'name' => 'Usuarios', 'path' => '/users'],
-                    ['icon' => 'shield', 'name' => 'Roles y permisos', 'path' => null],
+                    ['icon' => 'shield', 'name' => 'Roles y permisos', 'path' => '/roles'],
                     ['icon' => 'settings', 'name' => 'Configuración', 'path' => null],
                 ],
             ],

@@ -7,6 +7,7 @@ use App\Livewire\Users\UsersTable;
 use App\Models\User;
 use Database\Seeders\PermissionSeeder;
 use Database\Seeders\RoleSeeder;
+use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
@@ -137,9 +138,10 @@ class UsersCrudTest extends TestCase
         $this->assertModelExists($otherAdmin);
     }
 
-    public function test_database_seeder_creates_an_admin_that_can_see_users(): void
+    public function test_user_seeder_creates_an_admin_that_can_see_users(): void
     {
-        $this->seed();
+        // Roles y permisos ya se sembraron en setUp().
+        $this->seed(UserSeeder::class);
 
         $admin = User::where('username', 'admin')->firstOrFail();
 
