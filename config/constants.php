@@ -7,11 +7,13 @@
 return [
     'type_model' => [
         'Categories' => 'Categories',
+        'Products' => 'Products',
         'Users' => 'Users',
         'Roles' => 'Roles',
     ],
     'type_description' => [
         'Categorias' => 'Categorias',
+        'Productos' => 'Productos',
         'Usuarios' => 'Usuarios',
         'Roles' => 'Roles',
     ],
