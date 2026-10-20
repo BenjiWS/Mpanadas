@@ -26,6 +26,11 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'edit categories', 'description' => 'Editar Categorias', 'type' => $type_model['Categories'], 'type_description' => $type_description['Categorias']]);
         Permission::create(['name' => 'delete categories', 'description' => 'Borrar Categorias', 'type' => $type_model['Categories'], 'type_description' => $type_description['Categorias']]);
 
+        Permission::create(['name' => 'get products', 'description' => 'Visualizar Productos', 'type' => $type_model['Products'], 'type_description' => $type_description['Productos']]);
+        Permission::create(['name' => 'create products', 'description' => 'Registrar Productos', 'type' => $type_model['Products'], 'type_description' => $type_description['Productos']]);
+        Permission::create(['name' => 'edit products', 'description' => 'Editar Productos', 'type' => $type_model['Products'], 'type_description' => $type_description['Productos']]);
+        Permission::create(['name' => 'delete products', 'description' => 'Eliminar Productos', 'type' => $type_model['Products'], 'type_description' => $type_description['Productos']]);
+
         Permission::create(['name' => 'get users', 'description' => 'Visualizar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
         Permission::create(['name' => 'create users', 'description' => 'Registrar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
         Permission::create(['name' => 'edit users', 'description' => 'Editar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
@@ -51,6 +56,12 @@ class PermissionSeeder extends Seeder
             'create categories',
             'edit categories',
             'delete categories',
+
+            // Productos: todos los permisos
+            'get products',
+            'create products',
+            'edit products',
+            'delete products',
 
             // Usuarios: solo visualización
             'get users',
