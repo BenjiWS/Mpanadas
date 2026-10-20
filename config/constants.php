@@ -6,10 +6,12 @@
  */
 return [
     'type_model' => [
+        'Categories' => 'Categories',
         'Users' => 'Users',
         'Roles' => 'Roles',
     ],
     'type_description' => [
+        'Categorias' => 'Categorias',
         'Usuarios' => 'Usuarios',
         'Roles' => 'Roles',
     ],
