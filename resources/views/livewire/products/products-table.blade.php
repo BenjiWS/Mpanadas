@@ -54,12 +54,12 @@
             @endif
         </div>
     @else
-        <div class="grid gap-7 md:grid-cols-2 xl:grid-cols-3" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage,toggleAvailability">
+        <div class="grid gap-6 sm:grid-cols-[repeat(auto-fill,minmax(16rem,20rem))]" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage,toggleAvailability">
             @foreach ($products as $product)
                 <article wire:key="product-{{ $product->id }}" aria-labelledby="product-{{ $product->id }}-name"
                     class="group flex flex-col overflow-hidden rounded-xl border border-gray-400/70 dark:border-gray-700">
-                    <div class="p-6 pb-5">
-                        <div class="aspect-[16/7] overflow-hidden rounded-lg bg-brand-50 dark:bg-brand-500/10">
+                    <div class="p-4 pb-4">
+                        <div class="aspect-[16/9] overflow-hidden rounded-lg bg-brand-50 dark:bg-brand-500/10">
                             @if ($product->image)
                                 <img src="{{ Storage::url($product->image) }}" alt="" loading="lazy"
                                     @class(['size-full object-cover', 'opacity-60 grayscale' => ! $product->available]) />
@@ -70,15 +70,15 @@
                             @endif
                         </div>
 
-                        <div class="mt-5 flex items-start justify-between gap-3">
-                            <h2 id="product-{{ $product->id }}-name" class="text-xl font-bold tracking-tight text-gray-800 dark:text-white/90">{{ $product->name }}</h2>
+                        <div class="mt-4 flex items-start justify-between gap-3">
+                            <h2 id="product-{{ $product->id }}-name" class="text-lg font-bold tracking-tight text-gray-800 dark:text-white/90">{{ $product->name }}</h2>
 
                             @can('edit products')
                                 <button type="button" wire:click="toggleAvailability({{ $product->id }})"
                                     aria-label="{{ $product->available ? 'Marcar como inactivo' : 'Marcar como activo' }}: {{ $product->name }}"
                                     title="{{ $product->available ? 'Marcar como inactivo' : 'Marcar como activo' }}"
                                     @class([
-                                        'shrink-0 rounded-full px-3 py-1 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 active:scale-95',
+                                        'shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 active:scale-95',
                                         'bg-brand-100 text-brand-600 hover:bg-brand-200 dark:bg-brand-500/15 dark:text-brand-300' => $product->available,
                                         'bg-gray-200 text-gray-600 hover:bg-gray-300 dark:bg-white/10 dark:text-gray-400' => ! $product->available,
                                     ])>
@@ -86,7 +86,7 @@
                                 </button>
                             @else
                                 <span @class([
-                                    'shrink-0 rounded-full px-3 py-1 text-sm font-semibold',
+                                    'shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold',
                                     'bg-brand-100 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300' => $product->available,
                                     'bg-gray-200 text-gray-600 dark:bg-white/10 dark:text-gray-400' => ! $product->available,
                                 ])>{{ $product->available ? 'Activo' : 'Inactivo' }}</span>
@@ -99,8 +99,8 @@
                     </div>
 
                     {{-- Precio y acciones --}}
-                    <div class="mt-auto flex items-center justify-between gap-3 border-b-4 border-brand-500 bg-brand-200/70 px-6 py-4 transition-colors group-hover:bg-brand-500 dark:bg-brand-500/15 dark:group-hover:bg-brand-500/40">
-                        <p class="text-2xl font-bold text-gray-800 tabular-nums transition-colors group-hover:text-white dark:text-white/90">
+                    <div class="mt-auto flex items-center justify-between gap-3 border-b-4 border-brand-500 bg-brand-200/70 px-4 py-3 transition-colors group-hover:bg-brand-500 dark:bg-brand-500/15 dark:group-hover:bg-brand-500/40">
+                        <p class="text-xl font-bold text-gray-800 tabular-nums transition-colors group-hover:text-white dark:text-white/90">
                             <span class="sr-only">Precio:</span> $ {{ number_format($product->price, 2, ',', '.') }}
                         </p>
 
@@ -109,14 +109,14 @@
                                 @can('delete products')
                                     <button type="button" wire:click="destroyConfirm({{ $product->id }})"
                                         aria-label="Eliminar {{ $product->name }}" title="Eliminar"
-                                        class="flex size-10 items-center justify-center rounded-lg text-gray-700 transition hover:bg-white/60 hover:text-error-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white group-hover:text-white group-hover:hover:text-error-600 dark:text-gray-300">
+                                        class="flex size-9 items-center justify-center rounded-lg text-gray-700 transition hover:bg-white/60 hover:text-error-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white group-hover:text-white group-hover:hover:text-error-600 dark:text-gray-300">
                                         <svg class="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M5.5 7l1 12a2 2 0 0 0 2 1.8h7a2 2 0 0 0 2-1.8l1-12M9 7V4.8A.8.8 0 0 1 9.8 4h4.4a.8.8 0 0 1 .8.8V7"/></svg>
                                     </button>
                                 @endcan
                                 @can('edit products')
                                     <button type="button" wire:click="edit({{ $product->id }})"
                                         aria-label="Editar {{ $product->name }}"
-                                        class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-gray-25 px-4 py-2 text-sm font-semibold text-gray-800 transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 active:scale-[0.98] dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+                                        class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-gray-25 px-3 py-1.5 text-sm font-semibold text-gray-800 transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 active:scale-[0.98] dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
                                         Editar
                                         <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
                                     </button>
