@@ -37,11 +37,12 @@ class Product extends Model
     }
 
     /**
-     * Ingredientes extra que se le pueden agregar.
+     * Ingredientes extra que se le pueden agregar. El pivot price es el precio en este
+     * producto; si es null se cobra el extra_price del ingrediente (ver Ingredient::priceAsExtra()).
      */
     public function extras(): BelongsToMany
     {
-        return $this->belongsToMany(Ingredient::class, 'product_extras');
+        return $this->belongsToMany(Ingredient::class, 'product_extras')->withPivot('price');
     }
 
     public function combos(): BelongsToMany
