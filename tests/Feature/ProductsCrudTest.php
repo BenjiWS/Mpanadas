@@ -6,6 +6,7 @@ use App\Livewire\Products\CrudProduct;
 use App\Livewire\Products\ProductsTable;
 use App\Models\Category;
 use App\Models\Combo;
+use App\Models\Ingredient;
 use App\Models\Product;
 use App\Models\User;
 use Database\Seeders\PermissionSeeder;
@@ -123,6 +124,54 @@ class ProductsCrudTest extends TestCase
 
         $this->assertNull($product->fresh()->image);
         Storage::disk('public')->assertMissing('products/vieja.jpg');
+    }
+
+    public function test_extras_are_saved_with_optional_price(): void
+    {
+        $queso = Ingredient::create(['name' => 'Queso', 'extra_price' => 0.5]);
+        $huevo = Ingredient::create(['name' => 'Huevo', 'extra_price' => 0.4]);
+        $product = $this->product();
+
+        Livewire::actingAs($this->admin)->test(CrudProduct::class, ['product' => $product])
+            ->assertSee('Queso')
+            ->set('selectedExtras', [(string) $queso->id, (string) $huevo->id])
+            ->set("extraPrices.{$queso->id}", '0.80')
+            ->call('update')
+            ->assertHasNoErrors();
+
+        $extras = $product->fresh()->extras;
+        $this->assertCount(2, $extras);
+        $this->assertSame('0.80', $extras->firstWhere('name', 'Queso')->priceAsExtra());
+        // Sin precio propio se cobra el general.
+        $this->assertNull($extras->firstWhere('name', 'Huevo')->pivot->price);
+        $this->assertSame('0.40', $extras->firstWhere('name', 'Huevo')->priceAsExtra());
+
+        // Al editar se cargan los extras y se pueden quitar.
+        Livewire::actingAs($this->admin)->test(CrudProduct::class, ['product' => $product->fresh()])
+            ->assertSet('selectedExtras', [(string) $queso->id, (string) $huevo->id])
+            ->set('selectedExtras', [(string) $huevo->id])
+            ->call('update');
+
+        $this->assertSame(['Huevo'], $product->fresh()->extras->pluck('name')->all());
+    }
+
+    public function test_extra_price_must_be_valid(): void
+    {
+        $queso = Ingredient::create(['name' => 'Queso', 'extra_price' => 0.5]);
+
+        Livewire::actingAs($this->admin)->test(CrudProduct::class, ['product' => $this->product()])
+            ->set('selectedExtras', [(string) $queso->id])
+            ->set("extraPrices.{$queso->id}", '-1')
+            ->call('update')
+            ->assertHasErrors("extraPrices.{$queso->id}");
+    }
+
+    public function test_inactive_ingredients_are_not_offered_unless_already_selected(): void
+    {
+        Ingredient::create(['name' => 'Panceta', 'extra_price' => 0.7, 'is_active' => false]);
+
+        Livewire::actingAs($this->admin)->test(CrudProduct::class)
+            ->assertDontSee('Panceta');
     }
 
     public function test_toggle_availability_and_filters(): void
