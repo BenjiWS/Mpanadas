@@ -42,7 +42,8 @@ class Ingredient extends Model
      */
     public function priceAsExtra(): string
     {
-        return $this->pivot?->price ?? $this->extra_price;
+        // El pivot no tiene cast: se normaliza a 2 decimales como extra_price.
+        return number_format((float) ($this->pivot?->price ?? $this->extra_price), 2, '.', '');
     }
 
     public function saleItemIngredients(): HasMany
