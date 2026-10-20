@@ -22,65 +22,126 @@
     </x-common.page-band>
 
     <div class="grid gap-7 lg:grid-cols-[minmax(0,1.8fr)_minmax(0,1fr)] lg:items-start">
-        {{-- Datos del producto --}}
-        <section aria-labelledby="datos-titulo" class="rounded-xl border border-gray-400/70 p-6 sm:p-8 dark:border-gray-700">
-            <h2 id="datos-titulo" class="text-xl font-bold tracking-tight text-gray-800 dark:text-white/90">Datos del producto</h2>
+        <div class="space-y-7">
+            {{-- Datos del producto --}}
+            <section aria-labelledby="datos-titulo" class="rounded-xl border border-gray-400/70 p-6 sm:p-8 dark:border-gray-700">
+                <h2 id="datos-titulo" class="text-xl font-bold tracking-tight text-gray-800 dark:text-white/90">Datos del producto</h2>
 
-            <div class="mt-6 space-y-5">
-                <div class="grid gap-5 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-                    <x-form.input name="name" label="Nombre" wire:model="name" required autocomplete="off" placeholder="Ej. Empanada de carne" />
+                <div class="mt-6 space-y-5">
+                    <div class="grid gap-5 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+                        <x-form.input name="name" label="Nombre" wire:model="name" required autocomplete="off" placeholder="Ej. Empanada de carne" />
 
-                    <div>
-                        <label for="price" class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                            Precio<span class="text-error-500">*</span>
-                        </label>
-                        <div class="relative">
-                            <span class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400" aria-hidden="true">$</span>
-                            <input id="price" type="number" step="0.01" min="0" inputmode="decimal" wire:model="price" placeholder="0,00"
-                                @class([
-                                    'shadow-theme-xs h-11 w-full rounded-lg border bg-transparent pr-4 pl-8 text-sm text-gray-800 tabular-nums placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:bg-gray-900 dark:text-white/90',
-                                    'border-error-300 focus:border-error-300 focus:ring-error-500/10 dark:border-error-700' => $errors->has('price'),
-                                    'border-gray-300 focus:border-brand-300 focus:ring-brand-500/10 dark:border-gray-700' => ! $errors->has('price'),
-                                ]) />
+                        <div>
+                            <label for="price" class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                                Precio<span class="text-error-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400" aria-hidden="true">$</span>
+                                <input id="price" type="number" step="0.01" min="0" inputmode="decimal" wire:model="price" placeholder="0,00"
+                                    @class([
+                                        'shadow-theme-xs h-11 w-full rounded-lg border bg-transparent pr-4 pl-8 text-sm text-gray-800 tabular-nums placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:bg-gray-900 dark:text-white/90',
+                                        'border-error-300 focus:border-error-300 focus:ring-error-500/10 dark:border-error-700' => $errors->has('price'),
+                                        'border-gray-300 focus:border-brand-300 focus:ring-brand-500/10 dark:border-gray-700' => ! $errors->has('price'),
+                                    ]) />
+                            </div>
+                            @error('price')
+                                <p class="mt-1.5 text-theme-xs text-error-500">{{ $message }}</p>
+                            @enderror
                         </div>
-                        @error('price')
+                    </div>
+
+                    {{-- Categorías --}}
+                    <div role="group" aria-labelledby="categorias-label">
+                        <p id="categorias-label" class="mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-400">
+                            Categorías<span class="text-error-500">*</span>
+                        </p>
+
+                        @if ($categories->isEmpty())
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                Todavía no hay categorías.
+                                @can('create categories')
+                                    <a href="{{ route('categories.create') }}" class="font-medium text-brand-600 underline-offset-2 hover:underline dark:text-brand-300">Crea una primero</a>.
+                                @endcan
+                            </p>
+                        @else
+                            <div class="flex flex-wrap gap-2">
+                                @foreach ($categories as $category)
+                                    <label wire:key="category-{{ $category->id }}"
+                                        class="cursor-pointer rounded-full border border-gray-300 px-3.5 py-1.5 text-sm text-gray-700 transition select-none hover:bg-white/60 has-checked:border-brand-500 has-checked:bg-brand-100 has-checked:font-medium has-checked:text-brand-700 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-brand-500 dark:border-gray-700 dark:text-gray-300 dark:has-checked:bg-brand-500/15 dark:has-checked:text-brand-300">
+                                        <input type="checkbox" wire:model="selectedCategories" value="{{ $category->id }}" class="sr-only" />
+                                        {{ $category->name }}
+                                    </label>
+                                @endforeach
+                            </div>
+                            <p class="mt-1.5 text-theme-xs text-gray-500 dark:text-gray-400">Puedes elegir más de una.</p>
+                        @endif
+
+                        @error('selectedCategories')
                             <p class="mt-1.5 text-theme-xs text-error-500">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
+            </section>
 
-                {{-- Categorías --}}
-                <div role="group" aria-labelledby="categorias-label">
-                    <p id="categorias-label" class="mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-400">
-                        Categorías<span class="text-error-500">*</span>
+            {{-- Extras --}}
+            <section aria-labelledby="extras-titulo" aria-describedby="extras-ayuda" class="rounded-xl border border-gray-400/70 p-6 sm:p-8 dark:border-gray-700">
+                <h2 id="extras-titulo" class="text-xl font-bold tracking-tight text-gray-800 dark:text-white/90">Extras</h2>
+                <p id="extras-ayuda" class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    Marca los ingredientes que el cliente puede agregar. Deja el precio vacío para cobrar el precio general del ingrediente.
+                </p>
+
+                @if ($ingredients->isEmpty())
+                    <p class="mt-5 text-sm text-gray-600 dark:text-gray-400">
+                        Todavía no hay ingredientes activos.
+                        @can('create ingredients')
+                            <a href="{{ route('ingredients.create') }}" class="font-medium text-brand-600 underline-offset-2 hover:underline dark:text-brand-300">Crea uno primero</a>.
+                        @endcan
                     </p>
-
-                    @if ($categories->isEmpty())
-                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                            Todavía no hay categorías.
-                            @can('create categories')
-                                <a href="{{ route('categories.create') }}" class="font-medium text-brand-600 underline-offset-2 hover:underline dark:text-brand-300">Crea una primero</a>.
-                            @endcan
-                        </p>
-                    @else
-                        <div class="flex flex-wrap gap-2">
-                            @foreach ($categories as $category)
-                                <label wire:key="category-{{ $category->id }}"
-                                    class="cursor-pointer rounded-full border border-gray-300 px-3.5 py-1.5 text-sm text-gray-700 transition select-none hover:bg-white/60 has-checked:border-brand-500 has-checked:bg-brand-100 has-checked:font-medium has-checked:text-brand-700 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-brand-500 dark:border-gray-700 dark:text-gray-300 dark:has-checked:bg-brand-500/15 dark:has-checked:text-brand-300">
-                                    <input type="checkbox" wire:model="selectedCategories" value="{{ $category->id }}" class="sr-only" />
-                                    {{ $category->name }}
+                @else
+                    <ul class="mt-5 divide-y divide-gray-200 border-y border-gray-200 dark:divide-gray-800 dark:border-gray-800">
+                        @foreach ($ingredients as $ingredient)
+                            @php
+                                $checked = in_array((string) $ingredient->id, $selectedExtras, true);
+                            @endphp
+                            <li wire:key="extra-{{ $ingredient->id }}" class="flex flex-wrap items-center gap-x-4 gap-y-2 py-3">
+                                <label class="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-sm select-none">
+                                    <input type="checkbox" wire:model.live="selectedExtras" value="{{ $ingredient->id }}"
+                                        class="size-4 rounded border-gray-300 accent-brand-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 dark:border-gray-700" />
+                                    <span class="min-w-0">
+                                        <span class="font-medium text-gray-800 dark:text-white/90">{{ $ingredient->name }}</span>
+                                        <span class="block text-theme-xs text-gray-500 tabular-nums dark:text-gray-400">
+                                            Precio general: $ {{ number_format($ingredient->extra_price, 2, ',', '.') }}
+                                            @unless ($ingredient->is_active)
+                                                · <span class="text-error-600 dark:text-error-500">desactivado</span>
+                                            @endunless
+                                        </span>
+                                    </span>
                                 </label>
-                            @endforeach
-                        </div>
-                        <p class="mt-1.5 text-theme-xs text-gray-500 dark:text-gray-400">Puedes elegir más de una.</p>
-                    @endif
 
-                    @error('selectedCategories')
-                        <p class="mt-1.5 text-theme-xs text-error-500">{{ $message }}</p>
-                    @enderror
-                </div>
-            </div>
-        </section>
+                                <div class="w-36">
+                                    <label for="extra-price-{{ $ingredient->id }}" class="sr-only">Precio de {{ $ingredient->name }} en este producto</label>
+                                    <div class="relative">
+                                        <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400" aria-hidden="true">$</span>
+                                        <input id="extra-price-{{ $ingredient->id }}" type="number" step="0.01" min="0" inputmode="decimal"
+                                            wire:model="extraPrices.{{ $ingredient->id }}" @disabled(! $checked)
+                                            placeholder="{{ number_format($ingredient->extra_price, 2, ',', '') }}"
+                                            @class([
+                                                'h-10 w-full rounded-lg border bg-transparent pr-3 pl-7 text-sm text-gray-800 tabular-nums placeholder:text-gray-400 focus:ring-3 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-900 dark:text-white/90',
+                                                'border-error-300 focus:border-error-300 focus:ring-error-500/10 dark:border-error-700' => $errors->has('extraPrices.'.$ingredient->id),
+                                                'border-gray-300 focus:border-brand-300 focus:ring-brand-500/10 dark:border-gray-700' => ! $errors->has('extraPrices.'.$ingredient->id),
+                                            ]) />
+                                    </div>
+                                </div>
+
+                                @error('extraPrices.'.$ingredient->id)
+                                    <p class="w-full text-theme-xs text-error-500">{{ $message }}</p>
+                                @enderror
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </section>
+        </div>
 
         <div class="space-y-7">
             {{-- Imagen --}}

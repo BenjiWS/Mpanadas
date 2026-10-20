@@ -5,6 +5,7 @@ namespace App\Livewire\Products;
 use App\Livewire\Concerns\AuthorizesPermissions;
 use App\Livewire\Concerns\ReportsErrors;
 use App\Models\Category;
+use App\Models\Ingredient;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -30,6 +31,12 @@ class CrudProduct extends Component
     public $available = true;
 
     public array $selectedCategories = [];
+
+    /** Ids de los ingredientes que se ofrecen como extra en este producto */
+    public array $selectedExtras = [];
+
+    /** Precio propio de cada extra en este producto [ingredient_id => precio]; vacío = precio general */
+    public array $extraPrices = [];
 
     /** Imagen nueva subida desde el formulario */
     public $image;
@@ -62,6 +69,10 @@ class CrudProduct extends Component
             'available' => ['boolean'],
             'selectedCategories' => ['required', 'array', 'min:1'],
             'selectedCategories.*' => [Rule::exists('categories', 'id')->whereNull('deleted_at')],
+            'selectedExtras' => ['array'],
+            'selectedExtras.*' => [Rule::exists('ingredients', 'id')],
+            'extraPrices' => ['array'],
+            'extraPrices.*' => ['nullable', 'numeric', 'min:0', 'max:99999999.99'],
             'image' => ['nullable', 'image', 'max:2048'],
         ];
     }
@@ -79,6 +90,9 @@ class CrudProduct extends Component
             'selectedCategories.min' => __('Debe seleccionar al menos una categoría'),
             'image.image' => __('El archivo debe ser una imagen'),
             'image.max' => __('La imagen no puede pesar más de 2 MB'),
+            'extraPrices.*.numeric' => __('El precio del extra debe ser un número'),
+            'extraPrices.*.min' => __('El precio del extra no puede ser negativo'),
+            'extraPrices.*.max' => __('El precio del extra es demasiado alto'),
         ];
     }
 
@@ -91,6 +105,8 @@ class CrudProduct extends Component
             $this->price = $product->price;
             $this->available = $product->available ?? true;
             $this->selectedCategories = $product->categories->pluck('id')->map(fn ($id) => (string) $id)->all();
+            $this->selectedExtras = $product->extras->pluck('id')->map(fn ($id) => (string) $id)->all();
+            $this->extraPrices = $product->extras->mapWithKeys(fn ($extra) => [$extra->id => $extra->pivot->price])->all();
             $this->currentImage = $product->image;
             $this->title = __('Edición de :name', ['name' => $product->name]);
         }
@@ -123,7 +139,26 @@ class CrudProduct extends Component
     {
         return view('livewire.products.crud-product', [
             'categories' => Category::orderBy('name')->get(),
+            // Los activos, más los inactivos que el producto ya tenía, para no quitarlos sin avisar.
+            'ingredients' => Ingredient::where('is_active', true)
+                ->orWhereIn('id', $this->selectedExtras)
+                ->orderBy('name')
+                ->get(),
         ])->title($this->title);
+    }
+
+    /**
+     * Extras para sync(): [ingredient_id => ['price' => precio propio o null]].
+     */
+    protected function extrasForSync(): array
+    {
+        return collect($this->selectedExtras)
+            ->mapWithKeys(function ($id) {
+                $price = $this->extraPrices[$id] ?? null;
+
+                return [$id => ['price' => $price === '' || $price === null ? null : $price]];
+            })
+            ->all();
     }
 
     /**
@@ -154,6 +189,7 @@ class CrudProduct extends Component
                 'image' => $this->resolveImage(),
             ]);
             $product->categories()->sync($data['selectedCategories']);
+            $product->extras()->sync($this->extrasForSync());
 
             DB::commit();
 
@@ -195,6 +231,7 @@ class CrudProduct extends Component
                 'image' => $image,
             ]);
             $product->categories()->sync($data['selectedCategories']);
+            $product->extras()->sync($this->extrasForSync());
 
             DB::commit();
 
