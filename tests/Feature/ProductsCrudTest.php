@@ -133,9 +133,11 @@ class ProductsCrudTest extends TestCase
         $product = $this->product();
 
         Livewire::actingAs($this->admin)->test(CrudProduct::class, ['product' => $product])
-            ->assertSee('Queso')
-            ->set('selectedExtras', [(string) $queso->id, (string) $huevo->id])
-            ->set("extraPrices.{$queso->id}", '0.80')
+            ->set('newExtra', $queso->id)
+            ->call('addExtra')
+            ->set('newExtra', $huevo->id)
+            ->call('addExtra')
+            ->set('extras.0.price', '0.80')
             ->call('update')
             ->assertHasNoErrors();
 
@@ -146,10 +148,11 @@ class ProductsCrudTest extends TestCase
         $this->assertNull($extras->firstWhere('name', 'Huevo')->pivot->price);
         $this->assertSame('0.40', $extras->firstWhere('name', 'Huevo')->priceAsExtra());
 
-        // Al editar se cargan los extras y se pueden quitar.
+        // Al editar se cargan los extras (ordenados por nombre) y se pueden quitar.
         Livewire::actingAs($this->admin)->test(CrudProduct::class, ['product' => $product->fresh()])
-            ->assertSet('selectedExtras', [(string) $queso->id, (string) $huevo->id])
-            ->set('selectedExtras', [(string) $huevo->id])
+            ->assertSet('extras.0.id', $huevo->id)
+            ->assertSet('extras.1.id', $queso->id)
+            ->call('removeExtra', 1)
             ->call('update');
 
         $this->assertSame(['Huevo'], $product->fresh()->extras->pluck('name')->all());
@@ -160,18 +163,56 @@ class ProductsCrudTest extends TestCase
         $queso = Ingredient::create(['name' => 'Queso', 'extra_price' => 0.5]);
 
         Livewire::actingAs($this->admin)->test(CrudProduct::class, ['product' => $this->product()])
-            ->set('selectedExtras', [(string) $queso->id])
-            ->set("extraPrices.{$queso->id}", '-1')
+            ->set('newExtra', $queso->id)
+            ->call('addExtra')
+            ->set('extras.0.price', '-1')
             ->call('update')
-            ->assertHasErrors("extraPrices.{$queso->id}");
+            ->assertHasErrors('extras.0.price');
     }
 
-    public function test_inactive_ingredients_are_not_offered_unless_already_selected(): void
+    public function test_default_ingredients_are_saved_as_removable_or_required(): void
     {
-        Ingredient::create(['name' => 'Panceta', 'extra_price' => 0.7, 'is_active' => false]);
+        $masa = Ingredient::create(['name' => 'Masa', 'extra_price' => 0]);
+        $cebolla = Ingredient::create(['name' => 'Cebolla', 'extra_price' => 0.2]);
+        $product = $this->product();
+
+        Livewire::actingAs($this->admin)->test(CrudProduct::class, ['product' => $product])
+            ->set('newDefaultIngredient', $masa->id)
+            ->call('addDefaultIngredient')
+            ->set('newDefaultIngredient', $cebolla->id)
+            ->call('addDefaultIngredient')
+            // Se agrega como quitable; la masa se marca obligatoria.
+            ->assertSet('defaultIngredients.0.removable', true)
+            ->set('defaultIngredients.0.removable', '0')
+            ->call('update')
+            ->assertHasNoErrors();
+
+        $ingredients = $product->fresh()->ingredients;
+        $this->assertFalse((bool) $ingredients->firstWhere('name', 'Masa')->pivot->is_removable);
+        $this->assertTrue((bool) $ingredients->firstWhere('name', 'Cebolla')->pivot->is_removable);
+
+        Livewire::actingAs($this->admin)->test(CrudProduct::class, ['product' => $product->fresh()])
+            ->assertSet('defaultIngredients.0.id', $cebolla->id)
+            ->call('removeDefaultIngredient', 0)
+            ->call('update');
+
+        $this->assertSame(['Masa'], $product->fresh()->ingredients->pluck('name')->all());
+    }
+
+    public function test_cannot_add_the_same_ingredient_twice_or_an_inactive_one(): void
+    {
+        $queso = Ingredient::create(['name' => 'Queso', 'extra_price' => 0.5]);
+        $panceta = Ingredient::create(['name' => 'Panceta', 'extra_price' => 0.7, 'is_active' => false]);
 
         Livewire::actingAs($this->admin)->test(CrudProduct::class)
-            ->assertDontSee('Panceta');
+            ->assertDontSee('Panceta')
+            ->set('newExtra', $queso->id)
+            ->call('addExtra')
+            ->set('newExtra', $queso->id)
+            ->call('addExtra')
+            ->set('newExtra', $panceta->id)
+            ->call('addExtra')
+            ->assertCount('extras', 1);
     }
 
     public function test_toggle_availability_and_filters(): void

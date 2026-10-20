@@ -83,63 +83,174 @@
                 </div>
             </section>
 
-            {{-- Extras --}}
-            <section aria-labelledby="extras-titulo" aria-describedby="extras-ayuda" class="rounded-xl border border-gray-400/70 p-6 sm:p-8 dark:border-gray-700">
-                <h2 id="extras-titulo" class="text-xl font-bold tracking-tight text-gray-800 dark:text-white/90">Extras</h2>
-                <p id="extras-ayuda" class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    Marca los ingredientes que el cliente puede agregar. Deja el precio vacío para cobrar el precio general del ingrediente.
-                </p>
+            {{-- Ingredientes por defecto --}}
+            <section aria-labelledby="default-titulo" class="rounded-xl border border-gray-400/70 p-6 sm:p-8 dark:border-gray-700">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <h2 id="default-titulo" class="text-xl font-bold tracking-tight text-gray-800 dark:text-white/90">Ingredientes por defecto</h2>
 
-                @if ($ingredients->isEmpty())
+                    @if ($defaultOptions->isNotEmpty())
+                        <div class="flex items-center gap-2">
+                            <label for="new-default" class="sr-only">Ingrediente para agregar</label>
+                            <select id="new-default" wire:model="newDefaultIngredient"
+                                class="h-10 rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+                                <option value="">Elegir ingrediente…</option>
+                                @foreach ($defaultOptions as $option)
+                                    <option value="{{ $option->id }}">{{ $option->name }}</option>
+                                @endforeach
+                            </select>
+                            <button type="button" wire:click="addDefaultIngredient"
+                                class="h-10 rounded-lg border border-gray-400/70 bg-white/40 px-3.5 text-sm font-semibold text-gray-800 transition hover:bg-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 active:scale-[0.98] dark:border-gray-700 dark:bg-transparent dark:text-white/90 dark:hover:bg-white/5">
+                                + Agregar
+                            </button>
+                        </div>
+                    @endif
+                </div>
+
+                @if (empty($defaultIngredients))
                     <p class="mt-5 text-sm text-gray-600 dark:text-gray-400">
-                        Todavía no hay ingredientes activos.
-                        @can('create ingredients')
-                            <a href="{{ route('ingredients.create') }}" class="font-medium text-brand-600 underline-offset-2 hover:underline dark:text-brand-300">Crea uno primero</a>.
-                        @endcan
+                        @if ($ingredients->isEmpty())
+                            Todavía no hay ingredientes.
+                            @can('create ingredients')
+                                <a href="{{ route('ingredients.create') }}" class="font-medium text-brand-600 underline-offset-2 hover:underline dark:text-brand-300">Crea uno primero</a>.
+                            @endcan
+                        @else
+                            Agrega los ingredientes que lleva este producto.
+                        @endif
                     </p>
                 @else
-                    <ul class="mt-5 divide-y divide-gray-200 border-y border-gray-200 dark:divide-gray-800 dark:border-gray-800">
-                        @foreach ($ingredients as $ingredient)
-                            @php
-                                $checked = in_array((string) $ingredient->id, $selectedExtras, true);
-                            @endphp
-                            <li wire:key="extra-{{ $ingredient->id }}" class="flex flex-wrap items-center gap-x-4 gap-y-2 py-3">
-                                <label class="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-sm select-none">
-                                    <input type="checkbox" wire:model.live="selectedExtras" value="{{ $ingredient->id }}"
-                                        class="size-4 rounded border-gray-300 accent-brand-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 dark:border-gray-700" />
-                                    <span class="min-w-0">
-                                        <span class="font-medium text-gray-800 dark:text-white/90">{{ $ingredient->name }}</span>
-                                        <span class="block text-theme-xs text-gray-500 tabular-nums dark:text-gray-400">
-                                            Precio general: $ {{ number_format($ingredient->extra_price, 2, ',', '.') }}
-                                            @unless ($ingredient->is_active)
-                                                · <span class="text-error-600 dark:text-error-500">desactivado</span>
-                                            @endunless
-                                        </span>
-                                    </span>
-                                </label>
-
-                                <div class="w-36">
-                                    <label for="extra-price-{{ $ingredient->id }}" class="sr-only">Precio de {{ $ingredient->name }} en este producto</label>
-                                    <div class="relative">
-                                        <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400" aria-hidden="true">$</span>
-                                        <input id="extra-price-{{ $ingredient->id }}" type="number" step="0.01" min="0" inputmode="decimal"
-                                            wire:model="extraPrices.{{ $ingredient->id }}" @disabled(! $checked)
-                                            placeholder="{{ number_format($ingredient->extra_price, 2, ',', '') }}"
-                                            @class([
-                                                'h-10 w-full rounded-lg border bg-transparent pr-3 pl-7 text-sm text-gray-800 tabular-nums placeholder:text-gray-400 focus:ring-3 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-900 dark:text-white/90',
-                                                'border-error-300 focus:border-error-300 focus:ring-error-500/10 dark:border-error-700' => $errors->has('extraPrices.'.$ingredient->id),
-                                                'border-gray-300 focus:border-brand-300 focus:ring-brand-500/10 dark:border-gray-700' => ! $errors->has('extraPrices.'.$ingredient->id),
-                                            ]) />
-                                    </div>
-                                </div>
-
-                                @error('extraPrices.'.$ingredient->id)
-                                    <p class="w-full text-theme-xs text-error-500">{{ $message }}</p>
-                                @enderror
-                            </li>
-                        @endforeach
-                    </ul>
+                    <div class="custom-scrollbar mt-5 overflow-x-auto">
+                        <table class="w-full min-w-[440px] text-left">
+                            <thead>
+                                <tr class="border-b border-gray-300 text-theme-xs text-gray-500 dark:border-gray-700 dark:text-gray-400">
+                                    <th scope="col" class="py-2 pr-3 font-medium">Ingrediente</th>
+                                    <th scope="col" class="px-3 py-2 font-medium">¿Se puede quitar al vender?</th>
+                                    <th scope="col" class="py-2 pl-3"><span class="sr-only">Acciones</span></th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+                                @foreach ($defaultIngredients as $index => $row)
+                                    @php
+                                        $ingredient = $ingredients->get($row['id']);
+                                    @endphp
+                                    <tr wire:key="default-{{ $row['id'] }}">
+                                        <td class="py-2.5 pr-3 text-sm text-gray-800 dark:text-white/90">
+                                            {{ $ingredient?->name }}
+                                            @if ($ingredient && ! $ingredient->is_active)
+                                                <span class="text-theme-xs text-error-600 dark:text-error-500">· desactivado</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-3 py-2.5">
+                                            <div class="flex items-center gap-4 text-sm text-gray-700 dark:text-gray-300" role="radiogroup" aria-label="¿Se puede quitar {{ $ingredient?->name }}?">
+                                                <label class="inline-flex cursor-pointer items-center gap-1.5">
+                                                    <input type="radio" wire:model="defaultIngredients.{{ $index }}.removable" value="1" name="removable-{{ $row['id'] }}"
+                                                        class="size-4 accent-brand-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500" />
+                                                    Quitable
+                                                </label>
+                                                <label class="inline-flex cursor-pointer items-center gap-1.5">
+                                                    <input type="radio" wire:model="defaultIngredients.{{ $index }}.removable" value="0" name="removable-{{ $row['id'] }}"
+                                                        class="size-4 accent-brand-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500" />
+                                                    Obligatorio
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td class="py-2.5 pl-3 text-right">
+                                            <button type="button" wire:click="removeDefaultIngredient({{ $index }})"
+                                                aria-label="Quitar {{ $ingredient?->name }} de los ingredientes por defecto"
+                                                class="rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-600 underline-offset-2 transition hover:bg-error-50 hover:text-error-600 focus-visible:outline-2 focus-visible:outline-error-500 dark:text-gray-400 dark:hover:bg-error-500/10">
+                                                Quitar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 @endif
+
+                <p class="mt-4 text-theme-xs text-gray-500 dark:text-gray-400">Los quitables aparecen al vender para marcar, por ejemplo, «sin cebolla».</p>
+            </section>
+
+            {{-- Extras --}}
+            <section aria-labelledby="extras-titulo" class="rounded-xl border border-gray-400/70 p-6 sm:p-8 dark:border-gray-700">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <h2 id="extras-titulo" class="text-xl font-bold tracking-tight text-gray-800 dark:text-white/90">Ingredientes extra que se pueden agregar</h2>
+
+                    @if ($extraOptions->isNotEmpty())
+                        <div class="flex items-center gap-2">
+                            <label for="new-extra" class="sr-only">Extra para agregar</label>
+                            <select id="new-extra" wire:model="newExtra"
+                                class="h-10 rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+                                <option value="">Elegir extra…</option>
+                                @foreach ($extraOptions as $option)
+                                    <option value="{{ $option->id }}">{{ $option->name }}</option>
+                                @endforeach
+                            </select>
+                            <button type="button" wire:click="addExtra"
+                                class="h-10 rounded-lg border border-gray-400/70 bg-white/40 px-3.5 text-sm font-semibold text-gray-800 transition hover:bg-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 active:scale-[0.98] dark:border-gray-700 dark:bg-transparent dark:text-white/90 dark:hover:bg-white/5">
+                                + Agregar
+                            </button>
+                        </div>
+                    @endif
+                </div>
+
+                @if (empty($extras))
+                    <p class="mt-5 text-sm text-gray-600 dark:text-gray-400">Agrega los ingredientes que el cliente puede sumar a este producto.</p>
+                @else
+                    <div class="custom-scrollbar mt-5 overflow-x-auto">
+                        <table class="w-full min-w-[440px] text-left">
+                            <thead>
+                                <tr class="border-b border-gray-300 text-theme-xs text-gray-500 dark:border-gray-700 dark:text-gray-400">
+                                    <th scope="col" class="py-2 pr-3 font-medium">Ingrediente extra</th>
+                                    <th scope="col" class="px-3 py-2 font-medium">Precio adicional</th>
+                                    <th scope="col" class="py-2 pl-3"><span class="sr-only">Acciones</span></th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+                                @foreach ($extras as $index => $row)
+                                    @php
+                                        $ingredient = $ingredients->get($row['id']);
+                                    @endphp
+                                    <tr wire:key="extra-{{ $row['id'] }}">
+                                        <td class="py-2.5 pr-3 text-sm text-gray-800 dark:text-white/90">
+                                            {{ $ingredient?->name }}
+                                            @if ($ingredient && ! $ingredient->is_active)
+                                                <span class="text-theme-xs text-error-600 dark:text-error-500">· desactivado</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-3 py-2.5">
+                                            <label for="extra-price-{{ $row['id'] }}" class="sr-only">Precio adicional de {{ $ingredient?->name }}</label>
+                                            <div class="relative w-32">
+                                                <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400" aria-hidden="true">$</span>
+                                                <input id="extra-price-{{ $row['id'] }}" type="number" step="0.01" min="0" inputmode="decimal"
+                                                    wire:model="extras.{{ $index }}.price"
+                                                    placeholder="{{ number_format((float) $ingredient?->extra_price, 2, ',', '') }}"
+                                                    @class([
+                                                        'h-10 w-full rounded-lg border bg-transparent pr-3 pl-7 text-sm text-gray-800 tabular-nums placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:bg-gray-900 dark:text-white/90',
+                                                        'border-error-300 focus:border-error-300 focus:ring-error-500/10 dark:border-error-700' => $errors->has('extras.'.$index.'.price'),
+                                                        'border-gray-300 focus:border-brand-300 focus:ring-brand-500/10 dark:border-gray-700' => ! $errors->has('extras.'.$index.'.price'),
+                                                    ]) />
+                                            </div>
+                                            @error('extras.'.$index.'.price')
+                                                <p class="mt-1 text-theme-xs text-error-500">{{ $message }}</p>
+                                            @enderror
+                                        </td>
+                                        <td class="py-2.5 pl-3 text-right">
+                                            <button type="button" wire:click="removeExtra({{ $index }})"
+                                                aria-label="Quitar {{ $ingredient?->name }} de los extras"
+                                                class="rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-600 transition hover:bg-error-50 hover:text-error-600 focus-visible:outline-2 focus-visible:outline-error-500 dark:text-gray-400 dark:hover:bg-error-500/10">
+                                                Quitar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+
+                <p class="mt-4 text-theme-xs text-gray-500 dark:text-gray-400">
+                    Si dejas el precio vacío se cobra el precio general del módulo Ingredientes. Solo se pueden agregar ingredientes activos.
+                </p>
             </section>
         </div>
 
