@@ -54,11 +54,11 @@
             @endif
         </div>
     @else
-        <div class="grid gap-6 sm:grid-cols-[repeat(auto-fill,minmax(16rem,20rem))]" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage,toggleAvailability">
+        <div class="grid gap-6 sm:grid-cols-[repeat(auto-fill,minmax(18rem,23rem))]" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage,toggleAvailability">
             @foreach ($products as $product)
                 <article wire:key="product-{{ $product->id }}" aria-labelledby="product-{{ $product->id }}-name"
                     class="group flex flex-col overflow-hidden rounded-xl border border-gray-400/70 dark:border-gray-700">
-                    <div class="p-4 pb-4">
+                    <div class="p-5">
                         <div class="aspect-[16/9] overflow-hidden rounded-lg bg-brand-50 dark:bg-brand-500/10">
                             @if ($product->image)
                                 <img src="{{ Storage::url($product->image) }}" alt="" loading="lazy"
@@ -71,7 +71,7 @@
                         </div>
 
                         <div class="mt-4 flex items-start justify-between gap-3">
-                            <h2 id="product-{{ $product->id }}-name" class="text-lg font-bold tracking-tight text-gray-800 dark:text-white/90">{{ $product->name }}</h2>
+                            <h2 id="product-{{ $product->id }}-name" class="text-xl font-bold tracking-tight text-gray-800 dark:text-white/90">{{ $product->name }}</h2>
 
                             @can('edit products')
                                 <button type="button" wire:click="toggleAvailability({{ $product->id }})"
@@ -99,7 +99,7 @@
                     </div>
 
                     {{-- Precio y acciones --}}
-                    <div class="mt-auto flex items-center justify-between gap-3 border-b-4 border-brand-500 bg-brand-200/70 px-4 py-3 transition-colors group-hover:bg-brand-500 dark:bg-brand-500/15 dark:group-hover:bg-brand-500/40">
+                    <div class="mt-auto flex items-center justify-between gap-3 border-b-4 border-brand-500 bg-brand-200/70 px-5 py-3.5 transition-colors group-hover:bg-brand-500 dark:bg-brand-500/15 dark:group-hover:bg-brand-500/40">
                         <p class="text-xl font-bold text-gray-800 tabular-nums transition-colors group-hover:text-white dark:text-white/90">
                             <span class="sr-only">Precio:</span> $ {{ number_format($product->price, 2, ',', '.') }}
                         </p>
