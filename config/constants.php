@@ -8,12 +8,14 @@ return [
     'type_model' => [
         'Categories' => 'Categories',
         'Products' => 'Products',
+        'Ingredients' => 'Ingredients',
         'Users' => 'Users',
         'Roles' => 'Roles',
     ],
     'type_description' => [
         'Categorias' => 'Categorias',
         'Productos' => 'Productos',
+        'Ingredientes' => 'Ingredientes',
         'Usuarios' => 'Usuarios',
         'Roles' => 'Roles',
     ],
