@@ -32,10 +32,15 @@ class CatalogSeedersTest extends TestCase
         $this->assertFalse(Product::where('name', 'Roquefort y nuez')->first()->available);
 
         // Extras: el queso de la caprese tiene precio propio; el de la humita usa el general.
-        $this->assertSame(6, Ingredient::count());
+        $this->assertSame(13, Ingredient::count());
         $queso = fn (string $product) => Product::where('name', $product)->first()->extras->firstWhere('name', 'Queso');
         $this->assertSame('0.80', $queso('Caprese')->priceAsExtra());
         $this->assertSame('0.50', $queso('Humita')->priceAsExtra());
+
+        // Ingredientes por defecto: la masa es obligatoria y la cebolla se puede quitar.
+        $carne = Product::where('name', 'Empanada de carne')->first()->ingredients;
+        $this->assertFalse((bool) $carne->firstWhere('name', 'Masa')->pivot->is_removable);
+        $this->assertTrue((bool) $carne->firstWhere('name', 'Cebolla')->pivot->is_removable);
     }
 
     public function test_catalog_seeders_can_run_twice_without_duplicates(): void
@@ -45,7 +50,7 @@ class CatalogSeedersTest extends TestCase
         $this->seed($seeders);
 
         $this->assertSame(5, Category::count());
-        $this->assertSame(6, Ingredient::count());
+        $this->assertSame(13, Ingredient::count());
         $this->assertSame(12, Product::count());
     }
 }
