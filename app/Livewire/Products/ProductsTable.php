@@ -22,14 +22,14 @@ class ProductsTable extends Component
     public $filter = 'todos';
 
     /**
-     * Productos por página. La vista lo ajusta a columnas × 3 filas según cuántas
-     * tarjetas caben a lo ancho, para que las páginas no queden con huecos.
+     * Productos por página. La vista lo ajusta a columnas × 2 filas según cuántas
+     * tarjetas caben a lo ancho: la página cabe en pantalla y no queda con huecos.
      */
-    public $perPage = 9;
+    public $perPage = 6;
 
     public function updatedPerPage()
     {
-        $this->perPage = max(3, min(60, (int) $this->perPage));
+        $this->perPage = max(2, min(40, (int) $this->perPage));
         $this->resetPage();
     }
 

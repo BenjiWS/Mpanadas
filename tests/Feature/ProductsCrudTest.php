@@ -252,12 +252,12 @@ class ProductsCrudTest extends TestCase
             $this->product("Empanada {$n}");
         }
 
-        // 5 columnas × 3 filas: los 12 productos entran en una sola página.
+        // 5 columnas × 2 filas: 10 en la primera página y el resto en la segunda.
         Livewire::actingAs($this->admin)->test(ProductsTable::class)
-            ->set('perPage', 15)
-            ->assertSee('12 de 12 productos')
+            ->set('perPage', 10)
+            ->assertSee('10 de 12 productos')
             ->set('perPage', 1000)
-            ->assertSet('perPage', 60);
+            ->assertSet('perPage', 40);
     }
 
     public function test_search_by_name_or_category(): void

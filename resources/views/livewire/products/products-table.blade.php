@@ -54,13 +54,13 @@
             @endif
         </div>
     @else
-        {{-- Ajusta los productos por página a columnas × 3 filas, para que no queden huecos al paginar --}}
+        {{-- Ajusta los productos por página a columnas × 2 filas: la página cabe en pantalla y no quedan huecos --}}
         <div class="grid gap-6 sm:grid-cols-[repeat(auto-fill,minmax(18rem,23rem))]" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage,toggleAvailability,perPage"
             x-data="{
                 timer: null,
                 sync() {
                     const columns = getComputedStyle(this.$el).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
-                    const perPage = columns * 3;
+                    const perPage = columns * 2;
                     if (perPage !== Number(this.$wire.perPage)) this.$wire.set('perPage', perPage);
                 },
             }"
