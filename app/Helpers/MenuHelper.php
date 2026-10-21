@@ -32,7 +32,7 @@ class MenuHelper
                     ['icon' => 'empanada', 'name' => 'Productos', 'path' => '/products'],
                     ['icon' => 'combo', 'name' => 'Combos', 'path' => '/combos'],
                     ['icon' => 'category', 'name' => 'Categorías', 'path' => '/categories'],
-                    ['icon' => 'leaf', 'name' => 'Ingredientes', 'path' => null],
+                    ['icon' => 'leaf', 'name' => 'Ingredientes', 'path' => '/ingredients'],
                     ['icon' => 'tag', 'name' => 'Ofertas', 'path' => null],
                 ],
             ],

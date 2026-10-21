@@ -21,6 +21,18 @@ class ProductsTable extends Component
     /** todos | activos | inactivos */
     public $filter = 'todos';
 
+    /**
+     * Productos por página. La vista lo ajusta a columnas × 2 filas según cuántas
+     * tarjetas caben a lo ancho: la página cabe en pantalla y no queda con huecos.
+     */
+    public $perPage = 6;
+
+    public function updatedPerPage()
+    {
+        $this->perPage = max(2, min(40, (int) $this->perPage));
+        $this->resetPage();
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -45,7 +57,7 @@ class ProductsTable extends Component
                 ->when($this->filter === 'activos', fn ($query) => $query->where('available', true))
                 ->when($this->filter === 'inactivos', fn ($query) => $query->where('available', false))
                 ->orderBy('name')
-                ->paginate(9),
+                ->paginate($this->perPage),
         ]);
     }
 

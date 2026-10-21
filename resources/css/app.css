@@ -1313,6 +1313,11 @@ pre code,
   unicode-bidi: isolate;
 }
 
+/* Alpine: oculta los elementos con x-cloak hasta que Alpine arranca (evita el parpadeo al cargar) */
+[x-cloak] {
+  display: none !important;
+}
+
 /* SweetAlert2: su z-index (1060) queda debajo del header y el sidebar (z-99999) */
 .swal2-container {
   z-index: 999999 !important;

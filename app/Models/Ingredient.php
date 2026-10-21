@@ -36,6 +36,16 @@ class Ingredient extends Model
         return $this->belongsToMany(Product::class, 'product_extras');
     }
 
+    /**
+     * Precio que se cobra al agregarlo como extra. Cargado desde $product->extras, usa el
+     * precio propio de ese producto si tiene uno; si no, el extra_price general.
+     */
+    public function priceAsExtra(): string
+    {
+        // El pivot no tiene cast: se normaliza a 2 decimales como extra_price.
+        return number_format((float) ($this->pivot?->price ?? $this->extra_price), 2, '.', '');
+    }
+
     public function saleItemIngredients(): HasMany
     {
         return $this->hasMany(SaleItemIngredient::class);

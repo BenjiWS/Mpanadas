@@ -5,6 +5,8 @@ use App\Livewire\Categories\CrudCategory;
 use App\Livewire\Combos;
 use App\Livewire\Contador;
 use App\Livewire\Dashboard;
+use App\Livewire\Ingredients\CrudIngredient;
+use App\Livewire\Ingredients\IngredientsTable;
 use App\Livewire\Products\CrudProduct;
 use App\Livewire\Products\ProductsTable;
 use App\Livewire\Profile;
@@ -29,6 +31,10 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/products', ProductsTable::class)->name('products')->middleware('permission:get products');
     Route::livewire('/products/create', CrudProduct::class)->name('products.create')->middleware('permission:create products');
     Route::livewire('/products/{product}/edit', CrudProduct::class)->name('products.edit')->middleware('permission:edit products');
+
+    Route::livewire('/ingredients', IngredientsTable::class)->name('ingredients')->middleware('permission:get ingredients');
+    Route::livewire('/ingredients/create', CrudIngredient::class)->name('ingredients.create')->middleware('permission:create ingredients');
+    Route::livewire('/ingredients/{ingredient}/edit', CrudIngredient::class)->name('ingredients.edit')->middleware('permission:edit ingredients');
 
     Route::livewire('/categories', CategoriesTable::class)->name('categories')->middleware('permission:get categories');
     Route::livewire('/categories/create', CrudCategory::class)->name('categories.create')->middleware('permission:create categories');

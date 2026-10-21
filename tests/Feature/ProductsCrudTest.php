@@ -6,6 +6,7 @@ use App\Livewire\Products\CrudProduct;
 use App\Livewire\Products\ProductsTable;
 use App\Models\Category;
 use App\Models\Combo;
+use App\Models\Ingredient;
 use App\Models\Product;
 use App\Models\User;
 use Database\Seeders\PermissionSeeder;
@@ -125,6 +126,109 @@ class ProductsCrudTest extends TestCase
         Storage::disk('public')->assertMissing('products/vieja.jpg');
     }
 
+    public function test_extras_are_saved_with_optional_price(): void
+    {
+        $queso = Ingredient::create(['name' => 'Queso', 'extra_price' => 0.5]);
+        $huevo = Ingredient::create(['name' => 'Huevo', 'extra_price' => 0.4]);
+        $product = $this->product();
+
+        Livewire::actingAs($this->admin)->test(CrudProduct::class, ['product' => $product])
+            ->set('newExtra', $queso->id)
+            ->call('addExtra')
+            ->set('newExtra', $huevo->id)
+            ->call('addExtra')
+            ->set('extras.0.price', '0.80')
+            ->call('update')
+            ->assertHasNoErrors();
+
+        $extras = $product->fresh()->extras;
+        $this->assertCount(2, $extras);
+        $this->assertSame('0.80', $extras->firstWhere('name', 'Queso')->priceAsExtra());
+        // Sin precio propio se cobra el general.
+        $this->assertNull($extras->firstWhere('name', 'Huevo')->pivot->price);
+        $this->assertSame('0.40', $extras->firstWhere('name', 'Huevo')->priceAsExtra());
+
+        // Al editar se cargan los extras (ordenados por nombre) y se pueden quitar.
+        Livewire::actingAs($this->admin)->test(CrudProduct::class, ['product' => $product->fresh()])
+            ->assertSet('extras.0.id', $huevo->id)
+            ->assertSet('extras.1.id', $queso->id)
+            ->call('removeExtra', 1)
+            ->call('update');
+
+        $this->assertSame(['Huevo'], $product->fresh()->extras->pluck('name')->all());
+    }
+
+    public function test_extra_price_must_be_valid(): void
+    {
+        $queso = Ingredient::create(['name' => 'Queso', 'extra_price' => 0.5]);
+
+        Livewire::actingAs($this->admin)->test(CrudProduct::class, ['product' => $this->product()])
+            ->set('newExtra', $queso->id)
+            ->call('addExtra')
+            ->set('extras.0.price', '-1')
+            ->call('update')
+            ->assertHasErrors('extras.0.price');
+    }
+
+    public function test_default_ingredients_are_saved_as_removable_or_required(): void
+    {
+        $masa = Ingredient::create(['name' => 'Masa', 'extra_price' => 0]);
+        $cebolla = Ingredient::create(['name' => 'Cebolla', 'extra_price' => 0.2]);
+        $product = $this->product();
+
+        Livewire::actingAs($this->admin)->test(CrudProduct::class, ['product' => $product])
+            ->set('newDefaultIngredient', $masa->id)
+            ->call('addDefaultIngredient')
+            ->set('newDefaultIngredient', $cebolla->id)
+            ->call('addDefaultIngredient')
+            // Se agrega como quitable; la masa se marca obligatoria.
+            ->assertSet('defaultIngredients.0.removable', true)
+            ->set('defaultIngredients.0.removable', '0')
+            ->call('update')
+            ->assertHasNoErrors();
+
+        $ingredients = $product->fresh()->ingredients;
+        $this->assertFalse((bool) $ingredients->firstWhere('name', 'Masa')->pivot->is_removable);
+        $this->assertTrue((bool) $ingredients->firstWhere('name', 'Cebolla')->pivot->is_removable);
+
+        Livewire::actingAs($this->admin)->test(CrudProduct::class, ['product' => $product->fresh()])
+            ->assertSet('defaultIngredients.0.id', $cebolla->id)
+            ->call('removeDefaultIngredient', 0)
+            ->call('update');
+
+        $this->assertSame(['Masa'], $product->fresh()->ingredients->pluck('name')->all());
+    }
+
+    public function test_add_menu_adds_the_chosen_ingredient(): void
+    {
+        $cebolla = Ingredient::create(['name' => 'Cebolla', 'extra_price' => 0.2]);
+
+        Livewire::actingAs($this->admin)->test(CrudProduct::class)
+            ->assertSeeHtml('wire:click="addDefaultIngredient('.$cebolla->id.')"')
+            ->call('addDefaultIngredient', $cebolla->id)
+            ->assertSet('defaultIngredients.0.id', $cebolla->id)
+            // Una vez agregado ya no aparece en el menú de ingredientes por defecto.
+            ->assertDontSeeHtml('wire:click="addDefaultIngredient('.$cebolla->id.')"')
+            ->call('addExtra', $cebolla->id)
+            ->assertSet('extras.0.id', $cebolla->id);
+    }
+
+    public function test_cannot_add_the_same_ingredient_twice_or_an_inactive_one(): void
+    {
+        $queso = Ingredient::create(['name' => 'Queso', 'extra_price' => 0.5]);
+        $panceta = Ingredient::create(['name' => 'Panceta', 'extra_price' => 0.7, 'is_active' => false]);
+
+        Livewire::actingAs($this->admin)->test(CrudProduct::class)
+            ->assertDontSee('Panceta')
+            ->set('newExtra', $queso->id)
+            ->call('addExtra')
+            ->set('newExtra', $queso->id)
+            ->call('addExtra')
+            ->set('newExtra', $panceta->id)
+            ->call('addExtra')
+            ->assertCount('extras', 1);
+    }
+
     public function test_toggle_availability_and_filters(): void
     {
         $product = $this->product();
@@ -140,6 +244,20 @@ class ProductsCrudTest extends TestCase
             ->assertDontSee('Empanada de carne');
 
         $this->assertFalse($product->fresh()->available);
+    }
+
+    public function test_per_page_follows_the_grid_and_stays_in_range(): void
+    {
+        foreach (range(1, 12) as $n) {
+            $this->product("Empanada {$n}");
+        }
+
+        // 5 columnas × 2 filas: 10 en la primera página y el resto en la segunda.
+        Livewire::actingAs($this->admin)->test(ProductsTable::class)
+            ->set('perPage', 10)
+            ->assertSee('10 de 12 productos')
+            ->set('perPage', 1000)
+            ->assertSet('perPage', 40);
     }
 
     public function test_search_by_name_or_category(): void

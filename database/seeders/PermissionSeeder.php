@@ -31,6 +31,11 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'edit products', 'description' => 'Editar Productos', 'type' => $type_model['Products'], 'type_description' => $type_description['Productos']]);
         Permission::create(['name' => 'delete products', 'description' => 'Eliminar Productos', 'type' => $type_model['Products'], 'type_description' => $type_description['Productos']]);
 
+        Permission::create(['name' => 'get ingredients', 'description' => 'Visualizar Ingredientes', 'type' => $type_model['Ingredients'], 'type_description' => $type_description['Ingredientes']]);
+        Permission::create(['name' => 'create ingredients', 'description' => 'Registrar Ingredientes', 'type' => $type_model['Ingredients'], 'type_description' => $type_description['Ingredientes']]);
+        Permission::create(['name' => 'edit ingredients', 'description' => 'Editar Ingredientes', 'type' => $type_model['Ingredients'], 'type_description' => $type_description['Ingredientes']]);
+        Permission::create(['name' => 'delete ingredients', 'description' => 'Eliminar Ingredientes', 'type' => $type_model['Ingredients'], 'type_description' => $type_description['Ingredientes']]);
+
         Permission::create(['name' => 'get users', 'description' => 'Visualizar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
         Permission::create(['name' => 'create users', 'description' => 'Registrar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
         Permission::create(['name' => 'edit users', 'description' => 'Editar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
@@ -62,6 +67,12 @@ class PermissionSeeder extends Seeder
             'create products',
             'edit products',
             'delete products',
+
+            // Ingredientes: todos los permisos
+            'get ingredients',
+            'create ingredients',
+            'edit ingredients',
+            'delete ingredients',
 
             // Usuarios: solo visualización
             'get users',

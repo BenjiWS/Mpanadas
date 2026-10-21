@@ -54,7 +54,17 @@
             @endif
         </div>
     @else
-        <div class="grid gap-6 sm:grid-cols-[repeat(auto-fill,minmax(18rem,23rem))]" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage,toggleAvailability">
+        {{-- Ajusta los productos por página a columnas × 2 filas: la página cabe en pantalla y no quedan huecos --}}
+        <div class="grid gap-6 sm:grid-cols-[repeat(auto-fill,minmax(18rem,23rem))]" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage,toggleAvailability,perPage"
+            x-data="{
+                timer: null,
+                sync() {
+                    const columns = getComputedStyle(this.$el).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+                    const perPage = columns * 2;
+                    if (perPage !== Number(this.$wire.perPage)) this.$wire.set('perPage', perPage);
+                },
+            }"
+            x-init="sync(); new ResizeObserver(() => { clearTimeout(timer); timer = setTimeout(() => sync(), 200); }).observe($el)">
             @foreach ($products as $product)
                 <article wire:key="product-{{ $product->id }}" aria-labelledby="product-{{ $product->id }}-name"
                     class="group flex flex-col overflow-hidden rounded-xl border border-gray-400/70 dark:border-gray-700">
@@ -128,7 +138,8 @@
             @endforeach
         </div>
 
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {{-- Pie fijo abajo: el conteo y el paginador quedan a la vista al bajar --}}
+        <div class="sticky bottom-0 z-10 -mx-4 -mb-4 flex flex-col gap-3 border-t border-gray-300/80 bg-gray-50/95 px-4 py-3 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between md:-mx-6 md:-mb-6 md:px-6 dark:border-gray-800 dark:bg-gray-900/95">
             <p class="text-sm text-gray-600 tabular-nums dark:text-gray-400" aria-live="polite">
                 {{ $products->count() }} de {{ $products->total() }} {{ $products->total() === 1 ? 'producto' : 'productos' }}
             </p>
