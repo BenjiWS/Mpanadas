@@ -6,8 +6,8 @@
     'showPrice' => false,  // muestra el precio general junto a cada opción
 ])
 
-{{-- Botón "+ Agregar" que abre un menú con buscador para elegir una opción --}}
-<div class="relative shrink-0"
+{{-- Botón "+ Agregar" que abre un menú con buscador para elegir una opción; el menú mide lo mismo que el botón --}}
+<div class="relative w-44 shrink-0"
     x-data="{
         open: false,
         q: '',
@@ -25,16 +25,15 @@
     <button type="button" @click="toggle()" :aria-expanded="open.toString()" aria-haspopup="true"
         @disabled($options->isEmpty())
         title="{{ $options->isEmpty() ? 'No hay más ingredientes activos para agregar' : '' }}"
-        class="inline-flex h-9 items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 text-sm font-semibold text-gray-800 transition hover:border-brand-400 hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-gray-300 disabled:hover:text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+        class="inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 text-sm font-semibold text-gray-800 transition hover:border-brand-400 hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-gray-300 disabled:hover:text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
         <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
         {{ $label }}
         <svg class="size-3.5 transition" :class="{ 'rotate-180': open }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
     </button>
 
     <div x-show="open" x-cloak x-transition.opacity.scale.origin.top.right
-        class="absolute right-0 z-30 mt-2 w-max max-w-64 min-w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-theme-lg dark:border-gray-800 dark:bg-gray-900">
+        class="absolute inset-x-0 z-30 mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-theme-lg dark:border-gray-800 dark:bg-gray-900">
         <div class="border-b border-gray-100 p-2 dark:border-gray-800">
-            {{-- size="1": el buscador no ensancha el menú; toma el ancho del botón o de la opción más larga --}}
             <input x-ref="search" x-model="q" type="search" size="1" placeholder="{{ $searchLabel }}" aria-label="{{ $searchLabel }}"
                 class="h-9 w-full min-w-0 rounded-lg border-0 bg-gray-50 px-3 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-brand-500/20 focus:outline-hidden dark:bg-white/5 dark:text-white/90" />
         </div>
@@ -44,9 +43,9 @@
                 <li wire:key="{{ $action }}-option-{{ $option->id }}" x-show="matches(@js($option->name))">
                     <button type="button" wire:click="{{ $action }}({{ $option->id }})" @click="open = false"
                         class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm text-gray-700 transition hover:bg-brand-50 hover:text-brand-700 focus-visible:bg-brand-50 focus-visible:outline-hidden dark:text-gray-300 dark:hover:bg-brand-500/10 dark:hover:text-brand-300 dark:focus-visible:bg-brand-500/10">
-                        <span>{{ $option->name }}</span>
+                        <span class="min-w-0 break-words">{{ $option->name }}</span>
                         @if ($showPrice)
-                            <span class="text-theme-xs text-gray-500 tabular-nums dark:text-gray-400">$ {{ number_format($option->extra_price, 2, ',', '.') }}</span>
+                            <span class="shrink-0 text-theme-xs text-gray-500 tabular-nums dark:text-gray-400">$ {{ number_format($option->extra_price, 2, ',', '.') }}</span>
                         @endif
                     </button>
                 </li>
