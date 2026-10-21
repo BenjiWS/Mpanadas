@@ -54,7 +54,17 @@
             @endif
         </div>
     @else
-        <div class="grid gap-6 sm:grid-cols-[repeat(auto-fill,minmax(18rem,23rem))]" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage,toggleAvailability">
+        {{-- Ajusta los productos por página a columnas × 3 filas, para que no queden huecos al paginar --}}
+        <div class="grid gap-6 sm:grid-cols-[repeat(auto-fill,minmax(18rem,23rem))]" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage,toggleAvailability,perPage"
+            x-data="{
+                timer: null,
+                sync() {
+                    const columns = getComputedStyle(this.$el).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+                    const perPage = columns * 3;
+                    if (perPage !== Number(this.$wire.perPage)) this.$wire.set('perPage', perPage);
+                },
+            }"
+            x-init="sync(); new ResizeObserver(() => { clearTimeout(timer); timer = setTimeout(() => sync(), 200); }).observe($el)">
             @foreach ($products as $product)
                 <article wire:key="product-{{ $product->id }}" aria-labelledby="product-{{ $product->id }}-name"
                     class="group flex flex-col overflow-hidden rounded-xl border border-gray-400/70 dark:border-gray-700">

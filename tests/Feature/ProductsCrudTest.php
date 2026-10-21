@@ -246,6 +246,20 @@ class ProductsCrudTest extends TestCase
         $this->assertFalse($product->fresh()->available);
     }
 
+    public function test_per_page_follows_the_grid_and_stays_in_range(): void
+    {
+        foreach (range(1, 12) as $n) {
+            $this->product("Empanada {$n}");
+        }
+
+        // 5 columnas × 3 filas: los 12 productos entran en una sola página.
+        Livewire::actingAs($this->admin)->test(ProductsTable::class)
+            ->set('perPage', 15)
+            ->assertSee('12 de 12 productos')
+            ->set('perPage', 1000)
+            ->assertSet('perPage', 60);
+    }
+
     public function test_search_by_name_or_category(): void
     {
         $this->product();
