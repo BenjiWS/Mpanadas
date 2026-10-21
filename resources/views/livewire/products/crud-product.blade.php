@@ -106,12 +106,12 @@
             <div class="grid gap-8 @3xl:grid-cols-2 @3xl:items-start">
                 <div class="rounded-2xl border border-gray-300/80 bg-white/70 dark:border-gray-800 dark:bg-white/[0.03]">
                     {{-- 02 · Ingredientes por defecto --}}
-                    <section aria-labelledby="default-titulo" class="p-6 sm:p-8">
-                        <div class="flex items-center gap-4">
+                    <section aria-labelledby="default-titulo" class="p-6">
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-3">
                             <span class="{{ $sectionNumber }}" aria-hidden="true">02</span>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <h2 id="default-titulo" class="{{ $sectionTitle }}">Ingredientes por defecto</h2>
+                                    <h2 id="default-titulo" class="{{ $sectionTitle }} whitespace-nowrap">Ingredientes</h2>
                                     <span class="{{ $countBadge }}">{{ count($defaultIngredients) }}</span>
                                 </div>
                             </div>
@@ -120,7 +120,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-7 sm:pl-13">
+                        <div class="mt-6">
                             @if (empty($defaultIngredients))
                                 <div class="rounded-xl border border-dashed border-gray-300 px-5 py-6 text-center dark:border-gray-700">
                                     <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -141,7 +141,7 @@
                                             $ingredient = $ingredients->get($row['id']);
                                         @endphp
                                         <li wire:key="default-{{ $row['id'] }}" class="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-gray-200 bg-white px-3.5 py-2 transition hover:border-gray-300 dark:border-gray-800 dark:bg-transparent">
-                                            <span class="min-w-0 flex-1 text-sm font-medium text-gray-800 dark:text-white/90">
+                                            <span class="min-w-20 flex-1 text-sm font-medium text-gray-800 dark:text-white/90">
                                                 {{ $ingredient?->name }}
                                                 @if ($ingredient && ! $ingredient->is_active)
                                                     <span class="ml-1 text-theme-xs font-normal text-error-600 dark:text-error-500">desactivado</span>
@@ -175,12 +175,12 @@
 
                 <div class="rounded-2xl border border-gray-300/80 bg-white/70 dark:border-gray-800 dark:bg-white/[0.03]">
                     {{-- 03 · Extras --}}
-                    <section aria-labelledby="extras-titulo" class="p-6 sm:p-8">
-                        <div class="flex items-center gap-4">
+                    <section aria-labelledby="extras-titulo" class="p-6">
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-3">
                             <span class="{{ $sectionNumber }}" aria-hidden="true">03</span>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <h2 id="extras-titulo" class="{{ $sectionTitle }}">Extras que se pueden agregar</h2>
+                                    <h2 id="extras-titulo" class="{{ $sectionTitle }} whitespace-nowrap">Extras</h2>
                                     <span class="{{ $countBadge }}">{{ count($extras) }}</span>
                                 </div>
                             </div>
@@ -189,7 +189,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-7 sm:pl-13">
+                        <div class="mt-6">
                             @if (empty($extras))
                                 <div class="rounded-xl border border-dashed border-gray-300 px-5 py-6 text-center dark:border-gray-700">
                                     <p class="text-sm text-gray-600 dark:text-gray-400">Sin extras. Pulsa + Agregar si el cliente puede sumar algo, como queso o huevo.</p>
@@ -209,7 +209,7 @@
                                                             <span class="ml-1 text-theme-xs font-normal text-error-600 dark:text-error-500">desactivado</span>
                                                         @endif
                                                     </p>
-                                                    <p class="text-theme-xs text-gray-500 tabular-nums dark:text-gray-400">General: $ {{ number_format((float) $ingredient?->extra_price, 2, ',', '.') }}</p>
+                                                    <p class="text-theme-xs whitespace-nowrap text-gray-500 tabular-nums dark:text-gray-400">General: $ {{ number_format((float) $ingredient?->extra_price, 2, ',', '.') }}</p>
                                                 </div>
 
                                                 <div>

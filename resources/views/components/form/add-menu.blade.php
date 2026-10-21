@@ -7,7 +7,7 @@
 ])
 
 {{-- Botón "+ Agregar" que abre un menú con buscador para elegir una opción; el menú mide lo mismo que el botón --}}
-<div class="relative w-48 shrink-0"
+<div class="relative w-40 shrink-0"
     x-data="{
         open: false,
         q: '',
