@@ -185,7 +185,7 @@
                                 </div>
                             </div>
                             <div class="ml-auto">
-                                <x-form.add-menu :options="$extraOptions" action="addExtra" search-label="Buscar…" show-price />
+                                <x-form.add-menu :options="$extraOptions" action="addExtra" search-label="Buscar…" />
                             </div>
                         </div>
 
