@@ -138,7 +138,8 @@
             @endforeach
         </div>
 
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {{-- Pie fijo abajo: el conteo y el paginador quedan a la vista al bajar --}}
+        <div class="sticky bottom-0 z-10 -mx-4 -mb-4 flex flex-col gap-3 border-t border-gray-300/80 bg-gray-50/95 px-4 py-3 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between md:-mx-6 md:-mb-6 md:px-6 dark:border-gray-800 dark:bg-gray-900/95">
             <p class="text-sm text-gray-600 tabular-nums dark:text-gray-400" aria-live="polite">
                 {{ $products->count() }} de {{ $products->total() }} {{ $products->total() === 1 ? 'producto' : 'productos' }}
             </p>
