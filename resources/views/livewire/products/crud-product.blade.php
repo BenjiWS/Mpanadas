@@ -106,7 +106,7 @@
 
             {{-- Ingredientes por defecto y extras, lado a lado cuando hay espacio --}}
             <div class="grid gap-8 @3xl:grid-cols-2 @3xl:items-start">
-                <div class="overflow-hidden rounded-2xl border border-gray-300/80 bg-white/70 dark:border-gray-800 dark:bg-white/[0.03]">
+                <div class="rounded-2xl border border-gray-300/80 bg-white/70 dark:border-gray-800 dark:bg-white/[0.03]">
                     {{-- 02 · Ingredientes por defecto --}}
                     <section aria-labelledby="default-titulo" class="p-6 sm:p-8">
                         <div class="flex items-start gap-4">
@@ -117,6 +117,9 @@
                                     <span class="{{ $countBadge }}">{{ count($defaultIngredients) }}</span>
                                 </div>
                                 <p class="{{ $sectionHelp }}">Lo que lleva siempre. Los quitables se pueden sacar al vender, como «sin cebolla».</p>
+                            </div>
+                            <div class="ml-auto">
+                                <x-form.add-menu :options="$defaultOptions" action="addDefaultIngredient" search-label="Buscar ingrediente…" />
                             </div>
                         </div>
 
@@ -130,7 +133,7 @@
                                                 <a href="{{ route('ingredients.create') }}" class="font-medium text-brand-600 underline-offset-2 hover:underline dark:text-brand-300">Crea uno primero</a>.
                                             @endcan
                                         @else
-                                            Sin ingredientes todavía. Elige uno abajo y pulsa <span class="font-medium text-gray-800 dark:text-white/90">Agregar</span>.
+                                            Sin ingredientes todavía. Pulsa <span class="font-medium text-gray-800 dark:text-white/90">+ Agregar</span> para elegir uno.
                                         @endif
                                     </p>
                                 </div>
@@ -169,26 +172,11 @@
                                     @endforeach
                                 </ul>
                             @endif
-                            @if ($defaultOptions->isNotEmpty())
-                                <div class="mt-3 flex">
-                                    <label for="new-default" class="sr-only">Ingrediente para agregar</label>
-                                    <select id="new-default" wire:model="newDefaultIngredient" class="{{ $addSelect }}">
-                                        <option value="">Elegir ingrediente…</option>
-                                        @foreach ($defaultOptions as $option)
-                                            <option value="{{ $option->id }}">{{ $option->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <button type="button" wire:click="addDefaultIngredient" class="{{ $addButton }}">
-                                        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-                                        Agregar
-                                    </button>
-                                </div>
-                            @endif
                         </div>
                     </section>
                 </div>
 
-                <div class="overflow-hidden rounded-2xl border border-gray-300/80 bg-white/70 dark:border-gray-800 dark:bg-white/[0.03]">
+                <div class="rounded-2xl border border-gray-300/80 bg-white/70 dark:border-gray-800 dark:bg-white/[0.03]">
                     {{-- 03 · Extras --}}
                     <section aria-labelledby="extras-titulo" class="p-6 sm:p-8">
                         <div class="flex items-start gap-4">
@@ -200,12 +188,15 @@
                                 </div>
                                 <p class="{{ $sectionHelp }}">Se cobran aparte. Deja el precio vacío para usar el precio general del ingrediente.</p>
                             </div>
+                            <div class="ml-auto">
+                                <x-form.add-menu :options="$extraOptions" action="addExtra" search-label="Buscar extra…" show-price />
+                            </div>
                         </div>
 
                         <div class="mt-5 sm:pl-13">
                             @if (empty($extras))
                                 <div class="rounded-xl border border-dashed border-gray-300 px-5 py-6 text-center dark:border-gray-700">
-                                    <p class="text-sm text-gray-600 dark:text-gray-400">Sin extras. Elige uno abajo si el cliente puede sumar algo, como queso o huevo.</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Sin extras. Pulsa + Agregar si el cliente puede sumar algo, como queso o huevo.</p>
                                 </div>
                             @else
                                 <ul class="space-y-1.5">
@@ -252,21 +243,6 @@
                                         </li>
                                     @endforeach
                                 </ul>
-                            @endif
-                            @if ($extraOptions->isNotEmpty())
-                                <div class="mt-3 flex">
-                                    <label for="new-extra" class="sr-only">Extra para agregar</label>
-                                    <select id="new-extra" wire:model="newExtra" class="{{ $addSelect }}">
-                                        <option value="">Elegir extra…</option>
-                                        @foreach ($extraOptions as $option)
-                                            <option value="{{ $option->id }}">{{ $option->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <button type="button" wire:click="addExtra" class="{{ $addButton }}">
-                                        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-                                        Agregar
-                                    </button>
-                                </div>
                             @endif
                         </div>
                     </section>

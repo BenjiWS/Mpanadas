@@ -199,6 +199,20 @@ class ProductsCrudTest extends TestCase
         $this->assertSame(['Masa'], $product->fresh()->ingredients->pluck('name')->all());
     }
 
+    public function test_add_menu_adds_the_chosen_ingredient(): void
+    {
+        $cebolla = Ingredient::create(['name' => 'Cebolla', 'extra_price' => 0.2]);
+
+        Livewire::actingAs($this->admin)->test(CrudProduct::class)
+            ->assertSeeHtml('wire:click="addDefaultIngredient('.$cebolla->id.')"')
+            ->call('addDefaultIngredient', $cebolla->id)
+            ->assertSet('defaultIngredients.0.id', $cebolla->id)
+            // Una vez agregado ya no aparece en el menú de ingredientes por defecto.
+            ->assertDontSeeHtml('wire:click="addDefaultIngredient('.$cebolla->id.')"')
+            ->call('addExtra', $cebolla->id)
+            ->assertSet('extras.0.id', $cebolla->id);
+    }
+
     public function test_cannot_add_the_same_ingredient_twice_or_an_inactive_one(): void
     {
         $queso = Ingredient::create(['name' => 'Queso', 'extra_price' => 0.5]);

@@ -149,9 +149,9 @@ class CrudProduct extends Component
         $this->removeImage = (bool) $this->currentImage;
     }
 
-    public function addDefaultIngredient()
+    public function addDefaultIngredient($id = null)
     {
-        $id = (int) $this->newDefaultIngredient;
+        $id = (int) ($id ?? $this->newDefaultIngredient);
 
         if ($this->canAdd($id, $this->defaultIngredients)) {
             // Por defecto se puede quitar al vender; se marca Obligatorio si no.
@@ -167,9 +167,9 @@ class CrudProduct extends Component
         $this->defaultIngredients = array_values($this->defaultIngredients);
     }
 
-    public function addExtra()
+    public function addExtra($id = null)
     {
-        $id = (int) $this->newExtra;
+        $id = (int) ($id ?? $this->newExtra);
 
         if ($this->canAdd($id, $this->extras)) {
             $this->extras[] = ['id' => $id, 'price' => null];
