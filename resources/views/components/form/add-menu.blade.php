@@ -32,10 +32,11 @@
     </button>
 
     <div x-show="open" x-cloak x-transition.opacity.scale.origin.top.right
-        class="absolute right-0 z-30 mt-2 w-64 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-theme-lg dark:border-gray-800 dark:bg-gray-900">
+        class="absolute right-0 z-30 mt-2 w-max max-w-64 min-w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-theme-lg dark:border-gray-800 dark:bg-gray-900">
         <div class="border-b border-gray-100 p-2 dark:border-gray-800">
-            <input x-ref="search" x-model="q" type="search" placeholder="{{ $searchLabel }}" aria-label="{{ $searchLabel }}"
-                class="h-9 w-full rounded-lg border-0 bg-gray-50 px-3 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-brand-500/20 focus:outline-hidden dark:bg-white/5 dark:text-white/90" />
+            {{-- size="1": el buscador no ensancha el menú; toma el ancho del botón o de la opción más larga --}}
+            <input x-ref="search" x-model="q" type="search" size="1" placeholder="{{ $searchLabel }}" aria-label="{{ $searchLabel }}"
+                class="h-9 w-full min-w-0 rounded-lg border-0 bg-gray-50 px-3 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-brand-500/20 focus:outline-hidden dark:bg-white/5 dark:text-white/90" />
         </div>
 
         <ul class="max-h-60 overflow-y-auto p-1">

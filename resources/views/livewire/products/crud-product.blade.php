@@ -119,7 +119,7 @@
                                 <p class="{{ $sectionHelp }}">Lo que lleva siempre. Los quitables se pueden sacar al vender, como «sin cebolla».</p>
                             </div>
                             <div class="ml-auto">
-                                <x-form.add-menu :options="$defaultOptions" action="addDefaultIngredient" search-label="Buscar ingrediente…" />
+                                <x-form.add-menu :options="$defaultOptions" action="addDefaultIngredient" search-label="Buscar…" />
                             </div>
                         </div>
 
@@ -189,7 +189,7 @@
                                 <p class="{{ $sectionHelp }}">Se cobran aparte. Deja el precio vacío para usar el precio general del ingrediente.</p>
                             </div>
                             <div class="ml-auto">
-                                <x-form.add-menu :options="$extraOptions" action="addExtra" search-label="Buscar extra…" show-price />
+                                <x-form.add-menu :options="$extraOptions" action="addExtra" search-label="Buscar…" show-price />
                             </div>
                         </div>
 
