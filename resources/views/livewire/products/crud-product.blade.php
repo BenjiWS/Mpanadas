@@ -120,7 +120,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-5 sm:pl-13">
+                        <div class="mt-7 sm:pl-13">
                             @if (empty($defaultIngredients))
                                 <div class="rounded-xl border border-dashed border-gray-300 px-5 py-6 text-center dark:border-gray-700">
                                     <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -189,7 +189,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-5 sm:pl-13">
+                        <div class="mt-7 sm:pl-13">
                             @if (empty($extras))
                                 <div class="rounded-xl border border-dashed border-gray-300 px-5 py-6 text-center dark:border-gray-700">
                                     <p class="text-sm text-gray-600 dark:text-gray-400">Sin extras. Pulsa + Agregar si el cliente puede sumar algo, como queso o huevo.</p>
