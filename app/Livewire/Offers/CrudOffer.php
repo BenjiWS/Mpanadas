@@ -130,7 +130,7 @@ class CrudOffer extends Component
             $this->start_time = $offer->start_time ? substr($offer->start_time, 0, 5) : null;
             $this->end_time = $offer->end_time ? substr($offer->end_time, 0, 5) : null;
             $this->active = $offer->active ?? true;
-            $this->selectedCategories = $offer->categories->pluck('id')->map(fn ($id) => (string) $id)->all();
+            $this->selectedCategories = $offer->categories->sortBy('name')->pluck('id')->values()->all();
             $this->selectedProducts = $offer->products->sortBy('name')->pluck('id')->values()->all();
             $this->selectedCombos = $offer->combos->sortBy('name')->pluck('id')->values()->all();
             $this->title = __('Edición de :name', ['name' => $offer->name]);
@@ -145,27 +145,27 @@ class CrudOffer extends Component
         $this->resetValidation('discount_value');
     }
 
-    public function toggleWeekday(int $day)
+    /**
+     * Los chips de días están enlazados con wire:model: llegan como texto y en el orden en que se marcaron.
+     */
+    public function updatedWeekdays()
     {
-        if (! isset(Offer::WEEKDAYS[$day])) {
-            return;
-        }
+        $days = array_unique(array_map('intval', $this->weekdays));
+        $days = array_filter($days, fn ($day) => isset(Offer::WEEKDAYS[$day]));
+        sort($days);
 
-        $this->weekdays = in_array($day, $this->weekdays)
-            ? array_values(array_diff($this->weekdays, [$day]))
-            : [...$this->weekdays, $day];
-        sort($this->weekdays);
+        $this->weekdays = array_values($days);
     }
 
     /**
-     * Atajos de días: todos (vacío), lunes a viernes o fin de semana.
+     * Atajos de días. "Todos" marca los 7 chips (al guardar equivale a todos los días, igual que ninguno).
      */
     public function setWeekdays(string $preset)
     {
         $this->weekdays = match ($preset) {
             'weekdays' => [1, 2, 3, 4, 5],
             'weekend' => [6, 7],
-            default => [],
+            default => [1, 2, 3, 4, 5, 6, 7],
         };
     }
 
@@ -205,20 +205,32 @@ class CrudOffer extends Component
         $this->selectedCombos = array_values(array_diff($this->selectedCombos, [$id]));
     }
 
-    public function updatedSelectedCategories()
+    public function addCategory($id)
     {
-        $this->resetValidation('targets');
+        $id = (int) $id;
+
+        if ($id > 0 && ! in_array($id, $this->selectedCategories) && Category::whereKey($id)->exists()) {
+            $this->selectedCategories[] = $id;
+            $this->resetValidation('targets');
+        }
+    }
+
+    public function removeCategory(int $id)
+    {
+        $this->selectedCategories = array_values(array_diff($this->selectedCategories, [$id]));
     }
 
     public function render()
     {
+        $categories = Category::withCount('products')->orderBy('name')->get()->keyBy('id');
         $products = Product::orderBy('name')->get()->keyBy('id');
         $combos = Combo::orderBy('name')->get()->keyBy('id');
 
         return view('livewire.offers.crud-offer', [
-            'categories' => Category::orderBy('name')->get(),
+            'categories' => $categories,
             'products' => $products,
             'combos' => $combos,
+            'categoryOptions' => $categories->except($this->selectedCategories),
             'productOptions' => $products->except($this->selectedProducts),
             'comboOptions' => $combos->except($this->selectedCombos),
             'discountTypes' => DiscountType::cases(),

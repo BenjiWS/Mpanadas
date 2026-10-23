@@ -44,15 +44,17 @@
     </x-common.page-band>
 
     <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start xl:grid-cols-[minmax(0,1fr)_24rem]">
-        <div class="space-y-8">
+        <div class="@container space-y-8">
+            {{-- 01 y 02 en la misma fila cuando la columna mide 64rem o más; las tarjetas quedan de igual alto --}}
+            <div class="grid gap-8 @5xl:grid-cols-2">
             {{-- 01 · Datos y descuento --}}
-            <section aria-labelledby="datos-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
+            <section aria-labelledby="datos-titulo" class="@container/section rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
                 <div class="flex items-center gap-4">
                     <span class="{{ $sectionNumber }}" aria-hidden="true">01</span>
                     <h2 id="datos-titulo" class="{{ $sectionTitle }}">Oferta y descuento</h2>
                 </div>
 
-                <div class="mt-6 space-y-6 sm:pl-13">
+                <div class="mt-6 space-y-6 @2xl/section:pl-13">
                     <x-form.input name="name" label="Nombre" wire:model="name" required autocomplete="off" placeholder="Ej. Tardes con sabor" />
 
                     <div>
@@ -67,7 +69,7 @@
                         @enderror
                     </div>
 
-                    <div class="grid gap-5 sm:grid-cols-[minmax(0,1fr)_11rem] sm:items-start">
+                    <div class="grid gap-5 @xl/section:grid-cols-[minmax(0,1fr)_11rem] @xl/section:items-start">
                         <div role="radiogroup" aria-labelledby="tipo-label">
                             <p id="tipo-label" class="{{ $fieldLabel }}">Tipo de descuento<span class="text-error-500">*</span></p>
                             {{-- Control segmentado --}}
@@ -96,21 +98,21 @@
                                 @enderror
                             </div>
                         @else
-                            <p class="text-sm text-gray-600 sm:pt-7 dark:text-gray-400">Lleva dos y paga uno: la segunda unidad sale gratis.</p>
+                            <p class="text-sm text-gray-600 @xl/section:pt-7 dark:text-gray-400">Lleva dos y paga uno: la segunda unidad sale gratis.</p>
                         @endif
                     </div>
                 </div>
             </section>
 
             {{-- 02 · Vigencia y horario --}}
-            <section aria-labelledby="vigencia-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
+            <section aria-labelledby="vigencia-titulo" class="@container/section rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
                 <div class="flex items-center gap-4">
                     <span class="{{ $sectionNumber }}" aria-hidden="true">02</span>
                     <h2 id="vigencia-titulo" class="{{ $sectionTitle }}">Vigencia y horario</h2>
                 </div>
 
-                <div class="mt-6 space-y-6 sm:pl-13">
-                    <div class="grid gap-5 sm:grid-cols-2">
+                <div class="mt-6 space-y-6 @2xl/section:pl-13">
+                    <div class="grid gap-5 @sm/section:grid-cols-2">
                         <div>
                             <label for="starts_at" class="{{ $fieldLabel }}">Desde<span class="text-error-500">*</span></label>
                             <input id="starts_at" type="date" wire:model.live="starts_at"
@@ -143,7 +145,8 @@
                         <div class="flex flex-wrap gap-2">
                             @foreach (\App\Models\Offer::WEEKDAYS as $day => [$dayName, $dayShort])
                                 <label wire:key="day-{{ $day }}" class="{{ $chip }}" title="{{ $dayName }}">
-                                    <input type="checkbox" wire:click="toggleWeekday({{ $day }})" @checked(in_array($day, $weekdays)) class="sr-only" aria-label="{{ $dayName }}" />
+                                    {{-- wire:model mantiene el estado real de la casilla igual al del servidor (también con los atajos) --}}
+                                    <input type="checkbox" wire:model.live="weekdays" value="{{ $day }}" class="sr-only" aria-label="{{ $dayName }}" />
                                     {{ $dayShort }}
                                 </label>
                             @endforeach
@@ -179,9 +182,10 @@
                     </div>
                 </div>
             </section>
+            </div>
 
-            {{-- 03 · A qué aplica --}}
-            <section aria-labelledby="aplica-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
+            {{-- 03 · A qué aplica: tres listas como las de ingredientes del producto; en columnas si la sección es ancha --}}
+            <section aria-labelledby="aplica-titulo" class="@container/aplica rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
                 <div class="flex items-center gap-4">
                     <span class="{{ $sectionNumber }}" aria-hidden="true">03</span>
                     <div>
@@ -190,54 +194,57 @@
                     </div>
                 </div>
 
-                <div class="mt-6 space-y-6 sm:pl-13">
-                    @error('targets')
-                        <p class="rounded-lg bg-error-50 px-3 py-2 text-sm text-error-600 dark:bg-error-500/10 dark:text-error-500">{{ $message }}</p>
-                    @enderror
+                @error('targets')
+                    <p class="mt-6 rounded-lg bg-error-50 px-3 py-2 text-sm text-error-600 dark:bg-error-500/10 dark:text-error-500" role="alert">{{ $message }}</p>
+                @enderror
 
-                    <div role="group" aria-labelledby="categorias-label">
-                        <p id="categorias-label" class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-400">Categorías</p>
-                        @if ($categories->isEmpty())
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Todavía no hay categorías.</p>
-                        @else
-                            <div class="flex flex-wrap gap-2">
-                                @foreach ($categories as $category)
-                                    <label wire:key="category-{{ $category->id }}" class="{{ $chip }}">
-                                        <input type="checkbox" wire:model.live="selectedCategories" value="{{ $category->id }}" class="peer sr-only" />
-                                        <svg class="hidden size-3.5 peer-checked:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 13 4 4L19 7"/></svg>
-                                        {{ $category->name }}
-                                    </label>
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
-
+                <div class="mt-6 grid gap-8 @4xl/aplica:grid-cols-3 @4xl/aplica:gap-6">
                     @foreach ([
-                        ['label' => 'Productos', 'selected' => $selectedProducts, 'items' => $products, 'options' => $productOptions, 'add' => 'addProduct', 'remove' => 'removeProduct', 'empty' => 'No hay más productos para agregar'],
-                        ['label' => 'Combos', 'selected' => $selectedCombos, 'items' => $combos, 'options' => $comboOptions, 'add' => 'addCombo', 'remove' => 'removeCombo', 'empty' => 'No hay más combos para agregar'],
+                        ['key' => 'categorias', 'label' => 'Categorías', 'selected' => $selectedCategories, 'items' => $categories, 'options' => $categoryOptions, 'add' => 'addCategory', 'remove' => 'removeCategory', 'none' => 'Ninguna categoría.', 'full' => 'No hay más categorías para agregar'],
+                        ['key' => 'productos', 'label' => 'Productos', 'selected' => $selectedProducts, 'items' => $products, 'options' => $productOptions, 'add' => 'addProduct', 'remove' => 'removeProduct', 'none' => 'Ningún producto.', 'full' => 'No hay más productos para agregar'],
+                        ['key' => 'combos', 'label' => 'Combos', 'selected' => $selectedCombos, 'items' => $combos, 'options' => $comboOptions, 'add' => 'addCombo', 'remove' => 'removeCombo', 'none' => 'Ningún combo.', 'full' => 'No hay más combos para agregar'],
                     ] as $group)
-                        <div>
-                            <div class="mb-2 flex items-center justify-between gap-3">
-                                <p class="text-sm font-medium text-gray-700 dark:text-gray-400">{{ $group['label'] }}</p>
-                                <x-form.add-menu :options="$group['options']" :action="$group['add']" search-label="Buscar…" :empty-title="$group['empty']" />
+                        <section aria-labelledby="aplica-{{ $group['key'] }}" class="min-w-0">
+                            <div class="flex items-center gap-3">
+                                <h3 id="aplica-{{ $group['key'] }}" class="min-w-0 truncate text-base font-bold tracking-tight text-gray-800 dark:text-white/90">{{ $group['label'] }}</h3>
+                                <span class="rounded-md bg-gray-100 px-2 py-0.5 text-theme-xs font-semibold text-gray-600 tabular-nums dark:bg-white/5 dark:text-gray-400">{{ count($group['selected']) }}</span>
+                                <div class="ml-auto">
+                                    <x-form.add-menu :options="$group['options']" :action="$group['add']" search-label="Buscar…" :empty-title="$group['full']" compact />
+                                </div>
                             </div>
-                            @if (empty($group['selected']))
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Ninguno.</p>
-                            @else
-                                <ul class="flex flex-wrap gap-2">
-                                    @foreach ($group['selected'] as $id)
-                                        @php $item = $group['items']->get($id); @endphp
-                                        <li wire:key="{{ $group['add'] }}-{{ $id }}" class="inline-flex items-center gap-1 rounded-lg border border-brand-500 bg-brand-50 py-1 pr-1 pl-3 text-sm font-medium text-brand-700 dark:bg-brand-500/15 dark:text-brand-300">
-                                            {{ $item?->name }}
-                                            <button type="button" wire:click="{{ $group['remove'] }}({{ $id }})" aria-label="Quitar {{ $item?->name }}"
-                                                class="flex size-6 items-center justify-center rounded-md transition hover:bg-brand-100 focus-visible:outline-2 focus-visible:outline-brand-500 dark:hover:bg-brand-500/20">
-                                                <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-                                            </button>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            @endif
-                        </div>
+
+                            <div class="mt-4">
+                                @if (empty($group['selected']))
+                                    <div class="rounded-xl border border-dashed border-gray-300 px-4 py-5 text-center dark:border-gray-700">
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ $group['none'] }} Pulsa <span class="font-medium text-gray-800 dark:text-white/90">+ Agregar</span> para elegir.</p>
+                                    </div>
+                                @else
+                                    <ul class="space-y-1.5">
+                                        @foreach ($group['selected'] as $id)
+                                            @php
+                                                $item = $group['items']->get($id);
+                                                [$meta, $muted] = match ($group['key']) {
+                                                    'categorias' => [$item?->products_count.' '.($item?->products_count === 1 ? 'producto' : 'productos'), $item && ! $item->is_active],
+                                                    'productos' => ['$ '.number_format((float) $item?->price, 2, ',', '.').($item && ! $item->available ? ' · agotado' : ''), $item && ! $item->available],
+                                                    default => ['$ '.number_format((float) $item?->price, 2, ',', '.').($item && ! $item->is_active ? ' · inactivo' : ''), $item && ! $item->is_active],
+                                                };
+                                            @endphp
+                                            <li wire:key="{{ $group['key'] }}-{{ $id }}" class="flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-3.5 py-2 transition hover:border-gray-300 dark:border-gray-800 dark:bg-transparent">
+                                                <div class="min-w-0 flex-1">
+                                                    <p @class(['truncate text-sm font-medium', 'text-gray-800 dark:text-white/90' => ! $muted, 'text-gray-500 dark:text-gray-400' => $muted])>{{ $item?->name }}</p>
+                                                    <p class="text-theme-xs whitespace-nowrap text-gray-500 tabular-nums dark:text-gray-400">{{ $meta }}</p>
+                                                </div>
+                                                <button type="button" wire:click="{{ $group['remove'] }}({{ $id }})"
+                                                    aria-label="Quitar {{ $item?->name }} de la oferta" title="Quitar"
+                                                    class="flex size-8 shrink-0 items-center justify-center rounded-lg text-gray-400 transition hover:bg-error-50 hover:text-error-600 focus-visible:outline-2 focus-visible:outline-error-500 active:scale-90 dark:hover:bg-error-500/10">
+                                                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+                                                </button>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                            </div>
+                        </section>
                     @endforeach
                 </div>
             </section>
