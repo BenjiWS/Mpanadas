@@ -3,9 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\Combo;
 use App\Models\Ingredient;
 use App\Models\Product;
 use Database\Seeders\CategorySeeder;
+use Database\Seeders\ComboSeeder;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\IngredientSeeder;
 use Database\Seeders\ProductSeeder;
@@ -41,16 +43,29 @@ class CatalogSeedersTest extends TestCase
         $carne = Product::where('name', 'Empanada de carne')->first()->ingredients;
         $this->assertFalse((bool) $carne->firstWhere('name', 'Masa')->pivot->is_removable);
         $this->assertTrue((bool) $carne->firstWhere('name', 'Cebolla')->pivot->is_removable);
+
+        // Combos: todos traen productos con cantidad y cuestan menos que por separado.
+        $this->assertSame(7, Combo::count());
+        $this->assertSame(0, Combo::doesntHave('products')->count());
+        $clasico = Combo::where('name', 'Combo clásico')->first();
+        $this->assertSame(3, $clasico->products->firstWhere('name', 'Empanada de carne')->pivot->quantity);
+        Combo::with('products')->get()->each(fn (Combo $combo) => $this->assertLessThan(
+            $combo->products->sum(fn (Product $product) => $product->price * $product->pivot->quantity),
+            (float) $combo->price,
+        ));
+        // El gourmet está inactivo (y lleva un producto agotado): no cuenta como disponible.
+        $this->assertSame(6, Combo::available()->count());
     }
 
     public function test_catalog_seeders_can_run_twice_without_duplicates(): void
     {
-        $seeders = [CategorySeeder::class, IngredientSeeder::class, ProductSeeder::class];
+        $seeders = [CategorySeeder::class, IngredientSeeder::class, ProductSeeder::class, ComboSeeder::class];
         $this->seed($seeders);
         $this->seed($seeders);
 
         $this->assertSame(5, Category::count());
         $this->assertSame(13, Ingredient::count());
         $this->assertSame(12, Product::count());
+        $this->assertSame(7, Combo::count());
     }
 }

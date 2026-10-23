@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             IngredientSeeder::class,
             ProductSeeder::class,
+            ComboSeeder::class,
         ]);
     }
 }

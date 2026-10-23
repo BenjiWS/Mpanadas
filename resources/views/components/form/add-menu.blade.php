@@ -4,6 +4,7 @@
     'label' => 'Agregar',
     'searchLabel' => 'Buscar…',
     'showPrice' => false,  // muestra el precio general junto a cada opción
+    'emptyTitle' => 'No hay más ingredientes activos para agregar',
 ])
 
 {{-- Botón "+ Agregar" que abre un menú con buscador para elegir una opción; el menú mide lo mismo que el botón --}}
@@ -24,7 +25,7 @@
     @click.outside="open = false">
     <button type="button" @click="toggle()" :aria-expanded="open.toString()" aria-haspopup="true"
         @disabled($options->isEmpty())
-        title="{{ $options->isEmpty() ? 'No hay más ingredientes activos para agregar' : '' }}"
+        title="{{ $options->isEmpty() ? $emptyTitle : '' }}"
         class="inline-flex h-11 w-full items-center justify-start gap-2 rounded-lg border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-800 transition hover:border-brand-400 hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-gray-300 disabled:hover:text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
         <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
         {{ $label }}
