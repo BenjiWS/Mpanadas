@@ -157,6 +157,24 @@ class OffersCrudTest extends TestCase
         $this->assertCount(0, $offer->products);
     }
 
+    public function test_targets_are_added_and_removed_from_lists(): void
+    {
+        $postres = Category::create(['name' => 'Postres']);
+
+        Livewire::actingAs($this->admin)->test(CrudOffer::class)
+            // Se agregan desde el menú "+ Agregar" y no se repiten.
+            ->assertSeeHtml('wire:click="addCategory('.$this->carne->id.')"')
+            ->call('addCategory', $this->carne->id)
+            ->call('addCategory', $this->carne->id)
+            ->call('addCategory', $postres->id)
+            ->assertSet('selectedCategories', [$this->carne->id, $postres->id])
+            // Una vez agregada ya no aparece en el menú, y la fila muestra cuántos productos tiene.
+            ->assertDontSeeHtml('wire:click="addCategory('.$this->carne->id.')"')
+            ->assertSee('0 productos')
+            ->call('removeCategory', $postres->id)
+            ->assertSet('selectedCategories', [$this->carne->id]);
+    }
+
     public function test_all_days_preset_marks_every_day_and_saves_as_all_days(): void
     {
         $offer = $this->offer();

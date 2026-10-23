@@ -5,10 +5,11 @@
     'searchLabel' => 'Buscar…',
     'showPrice' => false,  // muestra el precio general junto a cada opción
     'emptyTitle' => 'No hay más ingredientes activos para agregar',
+    'compact' => false,    // botón chico para columnas angostas; el menú se abre más ancho, alineado a la derecha
 ])
 
 {{-- Botón "+ Agregar" que abre un menú con buscador para elegir una opción; el menú mide lo mismo que el botón --}}
-<div class="relative w-40 shrink-0"
+<div @class(['relative shrink-0', 'w-40' => ! $compact])
     x-data="{
         open: false,
         q: '',
@@ -26,14 +27,22 @@
     <button type="button" @click="toggle()" :aria-expanded="open.toString()" aria-haspopup="true"
         @disabled($options->isEmpty())
         title="{{ $options->isEmpty() ? $emptyTitle : '' }}"
-        class="inline-flex h-11 w-full items-center justify-start gap-2 rounded-lg border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-800 transition hover:border-brand-400 hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-gray-300 disabled:hover:text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+        @class([
+            'inline-flex items-center justify-start rounded-lg border border-gray-300 bg-white text-sm font-semibold text-gray-800 transition hover:border-brand-400 hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-gray-300 disabled:hover:text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90',
+            'h-11 w-full gap-2 px-4' => ! $compact,
+            'h-9 gap-1.5 px-3' => $compact,
+        ])>
         <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
         {{ $label }}
         <svg class="ml-auto size-3.5 transition" :class="{ 'rotate-180': open }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
     </button>
 
     <div x-show="open" x-cloak x-transition.opacity.scale.origin.top.right
-        class="absolute inset-x-0 z-30 mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-theme-lg dark:border-gray-800 dark:bg-gray-900">
+        @class([
+            'absolute z-30 mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-theme-lg dark:border-gray-800 dark:bg-gray-900',
+            'inset-x-0' => ! $compact,
+            'right-0 w-64' => $compact,
+        ])>
         <div class="border-b border-gray-100 p-2 dark:border-gray-800">
             <input x-ref="search" x-model="q" type="search" size="1" placeholder="{{ $searchLabel }}" aria-label="{{ $searchLabel }}"
                 class="h-9 w-full min-w-0 rounded-lg border-0 bg-gray-50 px-3 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-brand-500/20 focus:outline-hidden dark:bg-white/5 dark:text-white/90" />
