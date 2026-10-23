@@ -41,6 +41,11 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'edit combos', 'description' => 'Editar Combos', 'type' => $type_model['Combos'], 'type_description' => $type_description['Combos']]);
         Permission::create(['name' => 'delete combos', 'description' => 'Eliminar Combos', 'type' => $type_model['Combos'], 'type_description' => $type_description['Combos']]);
 
+        Permission::create(['name' => 'get offers', 'description' => 'Visualizar Ofertas', 'type' => $type_model['Offers'], 'type_description' => $type_description['Ofertas']]);
+        Permission::create(['name' => 'create offers', 'description' => 'Registrar Ofertas', 'type' => $type_model['Offers'], 'type_description' => $type_description['Ofertas']]);
+        Permission::create(['name' => 'edit offers', 'description' => 'Editar Ofertas', 'type' => $type_model['Offers'], 'type_description' => $type_description['Ofertas']]);
+        Permission::create(['name' => 'delete offers', 'description' => 'Eliminar Ofertas', 'type' => $type_model['Offers'], 'type_description' => $type_description['Ofertas']]);
+
         Permission::create(['name' => 'get users', 'description' => 'Visualizar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
         Permission::create(['name' => 'create users', 'description' => 'Registrar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
         Permission::create(['name' => 'edit users', 'description' => 'Editar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
@@ -84,6 +89,12 @@ class PermissionSeeder extends Seeder
             'create combos',
             'edit combos',
             'delete combos',
+
+            // Ofertas: todos los permisos
+            'get offers',
+            'create offers',
+            'edit offers',
+            'delete offers',
 
             // Usuarios: solo visualización
             'get users',
