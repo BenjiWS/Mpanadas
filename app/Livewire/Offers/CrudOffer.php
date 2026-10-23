@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class CrudOffer extends Component
@@ -332,6 +333,46 @@ class CrudOffer extends Component
 
         } catch (\Exception $e) {
             DB::rollback();
+            $this->dispatch('swalmodal',
+                type: 'warning',
+                title: __('¡Error!'),
+                text: $this->errorMessage($e),
+            );
+        }
+    }
+
+    public function destroyConfirm()
+    {
+        $this->authorizePermission('delete offers');
+
+        $this->dispatch('swalConfirm',
+            type: 'error',
+            title: __('¿Está seguro de eliminar esta oferta?'),
+            text: __('¡No podrás revertir tu decisión!'),
+            id: $this->offer_id,
+        );
+    }
+
+    #[On('destroy')]
+    public function destroy()
+    {
+        $this->authorizePermission('delete offers');
+
+        // Se elimina la oferta abierta en mount(), no un id enviado desde el navegador.
+        $offer = Offer::findOrFail($this->offer_id);
+
+        try {
+            // Soft delete: las ventas que la aplicaron la siguen referenciando.
+            $offer->delete();
+
+            $this->dispatch('swalmodal',
+                type: 'success',
+                title: __('¡Eliminado!'),
+                text: __('La oferta fue eliminada con éxito'),
+                redirect: route('offers'),
+            );
+
+        } catch (\Exception $e) {
             $this->dispatch('swalmodal',
                 type: 'warning',
                 title: __('¡Error!'),

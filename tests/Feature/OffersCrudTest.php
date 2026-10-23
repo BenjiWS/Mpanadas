@@ -170,10 +170,11 @@ class OffersCrudTest extends TestCase
         Carbon::setTestNow();
     }
 
-    public function test_filters_and_toggle_active(): void
+    public function test_filters_and_paused_offers(): void
     {
-        $offer = $this->offer();
+        $this->offer();
         $this->offer('Vieja', ['starts_at' => now()->subMonths(2), 'ends_at' => now()->subMonth()]);
+        $pausada = $this->offer('Pausada', ['active' => false]);
 
         Livewire::actingAs($this->admin)->test(OffersTable::class)
             ->call('setFilter', 'finalizadas')
@@ -182,11 +183,20 @@ class OffersCrudTest extends TestCase
             ->call('setFilter', 'vigentes')
             ->assertSee('Tardes con sabor')
             ->assertDontSee('Vieja')
-            ->call('toggleActive', $offer->id)
-            ->assertDontSee('Tardes con sabor');
+            // Una pausada no está vigente aunque esté dentro de sus fechas.
+            ->assertDontSee('Pausada');
 
-        $this->assertFalse($offer->fresh()->active);
-        $this->assertSame('pausada', $offer->fresh()->status());
+        $this->assertSame('pausada', $pausada->status());
+    }
+
+    public function test_card_shows_period_when_there_is_no_schedule(): void
+    {
+        $this->offer('Todo el mes', ['starts_at' => '2026-10-01', 'ends_at' => '2026-12-31 23:59:59']);
+        $this->offer('Solo tardes', ['start_time' => '15:00:00', 'end_time' => '17:00:00']);
+
+        Livewire::actingAs($this->admin)->test(OffersTable::class)
+            ->assertSee('1 oct – 31 dic 2026')
+            ->assertSee('Todos los días · 15:00–17:00');
     }
 
     public function test_search_by_name_or_target(): void
@@ -205,13 +215,27 @@ class OffersCrudTest extends TestCase
     {
         $offer = $this->offer();
 
-        Livewire::actingAs($this->admin)->test(OffersTable::class)
-            ->call('destroyConfirm', $offer->id)
+        // Se elimina desde el formulario de edición.
+        Livewire::actingAs($this->admin)->test(CrudOffer::class, ['offer' => $offer])
+            ->assertSeeHtml('wire:click="destroyConfirm"')
+            ->call('destroyConfirm')
             ->assertDispatched('swalConfirm')
-            ->call('destroy', $offer->id)
+            ->call('destroy')
             ->assertDispatched('swalmodal');
 
         $this->assertSoftDeleted($offer);
+
+        // Sin permiso no aparece el botón ni se puede llamar.
+        $supervisor = User::factory()->create()->assignRole('Supervisor');
+        $supervisor->roles->first()->revokePermissionTo('delete offers');
+        $otra = $this->offer('Otra');
+
+        Livewire::actingAs($supervisor)->test(CrudOffer::class, ['offer' => $otra])
+            ->assertDontSeeHtml('wire:click="destroyConfirm"')
+            ->call('destroy')
+            ->assertForbidden();
+
+        $this->assertNotSoftDeleted($otra);
     }
 
     public function test_seeder_creates_example_offers(): void

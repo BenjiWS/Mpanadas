@@ -162,7 +162,8 @@ class Offer extends Model
         $start = $this->starts_at->locale('es');
         $end = $this->ends_at->locale('es');
 
-        return $start->translatedFormat($start->year === $end->year ? 'j M' : 'j M Y').' – '.$end->translatedFormat('j M Y');
+        // Sin el punto de las abreviaturas en español ("oct." → "oct").
+        return str_replace('.', '', $start->translatedFormat($start->year === $end->year ? 'j M' : 'j M Y').' – '.$end->translatedFormat('j M Y'));
     }
 
     /**

@@ -5,8 +5,15 @@
         ->merge(collect($selectedProducts)->map(fn ($id) => $products->get($id)?->name))
         ->merge(collect($selectedCombos)->map(fn ($id) => $combos->get($id)?->name))
         ->filter()->values();
-    $schedule = \App\Models\Offer::describeWeekdays($weekdays)
-        .($start_time && $end_time ? ' · '.$start_time.'–'.$end_time : '');
+    // Oferta sin guardar para mostrar la misma línea de horario o fechas que la tarjeta del listado.
+    $draft = new \App\Models\Offer([
+        'starts_at' => $starts_at ?: today(),
+        'ends_at' => $ends_at ?: today(),
+        'weekdays' => $weekdays ? implode(',', $weekdays) : null,
+        'start_time' => $start_time ?: null,
+        'end_time' => $end_time ?: null,
+    ]);
+    $scheduleLine = $weekdays || $start_time ? $draft->scheduleLabel() : $draft->periodLabel();
 
     $sectionNumber = 'flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-100 text-sm font-bold text-brand-700 tabular-nums dark:bg-brand-500/15 dark:text-brand-300';
     $sectionTitle = 'text-lg font-bold tracking-tight text-gray-800 dark:text-white/90';
@@ -24,6 +31,14 @@
             {{ $action === 'store' ? 'Arma la promoción y mira cómo queda en la carta.' : 'Los cambios se ven en la vista previa antes de guardar.' }}
         </x-slot:subtitle>
         <x-slot:actions>
+            @if ($action === 'edit')
+                @can('delete offers')
+                    <button type="button" wire:click="destroyConfirm"
+                        class="rounded-lg px-4 py-2 text-base text-error-600 transition hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error-500 dark:text-error-500">
+                        Eliminar
+                    </button>
+                @endcan
+            @endif
             <a href="{{ route('offers') }}"
                 class="rounded-lg px-4 py-2 text-base text-gray-700 transition hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-gray-300">
                 Cancelar
@@ -254,22 +269,15 @@
                 <span class="text-theme-xs text-gray-500 dark:text-gray-400">Se actualiza al escribir</span>
             </div>
 
-            <article class="rounded-xl border border-gray-400/70 bg-brand-50/70 p-7 dark:border-gray-700 dark:bg-white/[0.03]">
-                <p class="text-sm font-semibold" :class="$wire.active ? 'text-brand-600 dark:text-brand-300' : 'text-gray-500 dark:text-gray-400'"
+            <article class="rounded-xl border border-gray-400/70 bg-brand-50 px-7 pt-7 pb-8 dark:border-gray-700 dark:bg-white/[0.03]">
+                <p class="text-sm font-semibold text-brand-600 dark:text-brand-300"
                     x-text="$wire.active ? 'Vigente' : 'Pausada'">{{ $active ? 'Vigente' : 'Pausada' }}</p>
-                <p class="mt-5 text-6xl leading-none font-light tracking-tight break-words text-brand-600 tabular-nums dark:text-brand-300" x-text="headline()"></p>
-                <h3 class="mt-7 text-xl font-bold tracking-tight break-words text-gray-800 dark:text-white/90"
+                <p class="mt-6 text-7xl leading-none font-light tracking-tight break-words text-brand-600 tabular-nums dark:text-brand-300" x-text="headline()"></p>
+                <h3 class="mt-8 text-2xl font-bold tracking-tight break-words text-gray-800 dark:text-white/90"
                     x-text="$wire.name || 'Nombre de la oferta'" :class="{ 'text-gray-400 dark:text-gray-500': ! $wire.name }">{{ $name ?: 'Nombre de la oferta' }}</h3>
-                <p class="mt-1.5 text-base break-words text-gray-600 dark:text-gray-400"
+                <p class="mt-2 text-lg break-words text-gray-600 dark:text-gray-400"
                     x-text="$wire.description || @js($targetNames->implode(' · ') ?: 'Elige a qué aplica')"></p>
-                <div class="mt-5 border-t border-gray-400/70 pt-4 text-sm text-gray-700 dark:border-gray-700 dark:text-gray-300">
-                    <p>{{ $schedule }}</p>
-                    @if ($starts_at && $ends_at)
-                        <p class="mt-0.5 text-gray-500 tabular-nums dark:text-gray-400">
-                            {{ \Illuminate\Support\Carbon::parse($starts_at)->locale('es')->translatedFormat('j M Y') }} – {{ \Illuminate\Support\Carbon::parse($ends_at)->locale('es')->translatedFormat('j M Y') }}
-                        </p>
-                    @endif
-                </div>
+                <p class="mt-5 border-t border-gray-400/70 pt-5 text-sm text-gray-700 tabular-nums dark:border-gray-700 dark:text-gray-300">{{ $scheduleLine }}</p>
             </article>
 
             {{-- Activa --}}

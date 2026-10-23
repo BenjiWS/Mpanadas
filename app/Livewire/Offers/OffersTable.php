@@ -3,10 +3,7 @@
 namespace App\Livewire\Offers;
 
 use App\Livewire\Concerns\AuthorizesPermissions;
-use App\Livewire\Concerns\ReportsErrors;
 use App\Models\Offer;
-use Illuminate\Support\Facades\DB;
-use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -14,7 +11,7 @@ use Livewire\WithPagination;
 #[Title('Ofertas')]
 class OffersTable extends Component
 {
-    use AuthorizesPermissions, ReportsErrors, WithPagination;
+    use AuthorizesPermissions, WithPagination;
 
     public $search = '';
 
@@ -72,59 +69,5 @@ class OffersTable extends Component
         $this->authorizePermission('edit offers');
 
         $this->redirectRoute('offers.edit', $offer);
-    }
-
-    /**
-     * Pausa la oferta o la vuelve a activar sin cambiar su vigencia.
-     */
-    public function toggleActive($id)
-    {
-        $this->authorizePermission('edit offers');
-
-        $offer = Offer::findOrFail($id);
-        $offer->update(['active' => ! $offer->active]);
-    }
-
-    public function destroyConfirm($id)
-    {
-        $this->authorizePermission('delete offers');
-
-        $this->dispatch('swalConfirm',
-            type: 'error',
-            title: __('¿Está seguro de eliminar esta oferta?'),
-            text: __('¡No podrás revertir tu decisión!'),
-            id: $id,
-        );
-    }
-
-    #[On('destroy')]
-    public function destroy($id)
-    {
-        $this->authorizePermission('delete offers');
-
-        $offer = Offer::findOrFail($id);
-
-        try {
-            DB::beginTransaction();
-
-            // Soft delete: las ventas que la aplicaron la siguen referenciando.
-            $offer->delete();
-
-            DB::commit();
-
-            $this->dispatch('swalmodal',
-                type: 'success',
-                title: __('¡Eliminado!'),
-                text: __('La oferta fue eliminada con éxito'),
-            );
-
-        } catch (\Exception $e) {
-            DB::rollback();
-            $this->dispatch('swalmodal',
-                type: 'warning',
-                title: __('¡Error!'),
-                text: $this->errorMessage($e),
-            );
-        }
     }
 }
