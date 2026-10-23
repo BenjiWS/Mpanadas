@@ -36,6 +36,11 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'edit ingredients', 'description' => 'Editar Ingredientes', 'type' => $type_model['Ingredients'], 'type_description' => $type_description['Ingredientes']]);
         Permission::create(['name' => 'delete ingredients', 'description' => 'Eliminar Ingredientes', 'type' => $type_model['Ingredients'], 'type_description' => $type_description['Ingredientes']]);
 
+        Permission::create(['name' => 'get combos', 'description' => 'Visualizar Combos', 'type' => $type_model['Combos'], 'type_description' => $type_description['Combos']]);
+        Permission::create(['name' => 'create combos', 'description' => 'Registrar Combos', 'type' => $type_model['Combos'], 'type_description' => $type_description['Combos']]);
+        Permission::create(['name' => 'edit combos', 'description' => 'Editar Combos', 'type' => $type_model['Combos'], 'type_description' => $type_description['Combos']]);
+        Permission::create(['name' => 'delete combos', 'description' => 'Eliminar Combos', 'type' => $type_model['Combos'], 'type_description' => $type_description['Combos']]);
+
         Permission::create(['name' => 'get users', 'description' => 'Visualizar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
         Permission::create(['name' => 'create users', 'description' => 'Registrar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
         Permission::create(['name' => 'edit users', 'description' => 'Editar Usuarios', 'type' => $type_model['Users'], 'type_description' => $type_description['Usuarios']]);
@@ -73,6 +78,12 @@ class PermissionSeeder extends Seeder
             'create ingredients',
             'edit ingredients',
             'delete ingredients',
+
+            // Combos: todos los permisos
+            'get combos',
+            'create combos',
+            'edit combos',
+            'delete combos',
 
             // Usuarios: solo visualización
             'get users',
