@@ -145,7 +145,8 @@
                         <div class="flex flex-wrap gap-2">
                             @foreach (\App\Models\Offer::WEEKDAYS as $day => [$dayName, $dayShort])
                                 <label wire:key="day-{{ $day }}" class="{{ $chip }}" title="{{ $dayName }}">
-                                    <input type="checkbox" wire:click="toggleWeekday({{ $day }})" @checked(in_array($day, $weekdays)) class="sr-only" aria-label="{{ $dayName }}" />
+                                    {{-- wire:model mantiene el estado real de la casilla igual al del servidor (también con los atajos) --}}
+                                    <input type="checkbox" wire:model.live="weekdays" value="{{ $day }}" class="sr-only" aria-label="{{ $dayName }}" />
                                     {{ $dayShort }}
                                 </label>
                             @endforeach

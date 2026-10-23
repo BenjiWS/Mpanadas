@@ -145,27 +145,27 @@ class CrudOffer extends Component
         $this->resetValidation('discount_value');
     }
 
-    public function toggleWeekday(int $day)
+    /**
+     * Los chips de días están enlazados con wire:model: llegan como texto y en el orden en que se marcaron.
+     */
+    public function updatedWeekdays()
     {
-        if (! isset(Offer::WEEKDAYS[$day])) {
-            return;
-        }
+        $days = array_unique(array_map('intval', $this->weekdays));
+        $days = array_filter($days, fn ($day) => isset(Offer::WEEKDAYS[$day]));
+        sort($days);
 
-        $this->weekdays = in_array($day, $this->weekdays)
-            ? array_values(array_diff($this->weekdays, [$day]))
-            : [...$this->weekdays, $day];
-        sort($this->weekdays);
+        $this->weekdays = array_values($days);
     }
 
     /**
-     * Atajos de días: todos (vacío), lunes a viernes o fin de semana.
+     * Atajos de días. "Todos" marca los 7 chips (al guardar equivale a todos los días, igual que ninguno).
      */
     public function setWeekdays(string $preset)
     {
         $this->weekdays = match ($preset) {
             'weekdays' => [1, 2, 3, 4, 5],
             'weekend' => [6, 7],
-            default => [],
+            default => [1, 2, 3, 4, 5, 6, 7],
         };
     }
 

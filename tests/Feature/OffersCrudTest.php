@@ -142,7 +142,9 @@ class OffersCrudTest extends TestCase
             ->assertSet('selectedProducts', [$this->empanada->id])
             ->set('discount_type', 'fixed')
             ->set('discount_value', '0.75')
-            ->call('toggleWeekday', 5)
+            // Así llegan desde los chips: como texto y en el orden en que se marcaron.
+            ->set('weekdays', ['6', '7', '5'])
+            ->assertSet('weekdays', [5, 6, 7])
             ->call('removeProduct', $this->empanada->id)
             ->call('update')
             ->assertHasNoErrors();
@@ -153,6 +155,25 @@ class OffersCrudTest extends TestCase
         $this->assertSame('5,6,7', $offer->weekdays);
         $this->assertSame('Viernes a domingo', $offer->scheduleLabel());
         $this->assertCount(0, $offer->products);
+    }
+
+    public function test_all_days_preset_marks_every_day_and_saves_as_all_days(): void
+    {
+        $offer = $this->offer();
+
+        // Lun a vie a mano, luego el atajo Todos: quedan los 7 días marcados (antes quedaba vacío y
+        // al completar la semana a mano se guardaban solo los días tocados después).
+        Livewire::actingAs($this->admin)->test(CrudOffer::class, ['offer' => $offer])
+            ->set('weekdays', ['1', '2', '3', '4', '5'])
+            ->call('setWeekdays', 'all')
+            ->assertSet('weekdays', [1, 2, 3, 4, 5, 6, 7])
+            ->assertSee('Todos los días')
+            ->call('update')
+            ->assertHasNoErrors();
+
+        // Los 7 días se guardan como "todos los días".
+        $this->assertNull($offer->fresh()->weekdays);
+        $this->assertSame('Todos los días', $offer->fresh()->scheduleLabel());
     }
 
     public function test_current_scope_checks_dates_days_and_hours(): void
