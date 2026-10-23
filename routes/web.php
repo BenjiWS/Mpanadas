@@ -8,6 +8,8 @@ use App\Livewire\Contador;
 use App\Livewire\Dashboard;
 use App\Livewire\Ingredients\CrudIngredient;
 use App\Livewire\Ingredients\IngredientsTable;
+use App\Livewire\Offers\CrudOffer;
+use App\Livewire\Offers\OffersTable;
 use App\Livewire\Products\CrudProduct;
 use App\Livewire\Products\ProductsTable;
 use App\Livewire\Profile;
@@ -39,6 +41,10 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/combos', CombosTable::class)->name('combos')->middleware('permission:get combos');
     Route::livewire('/combos/create', CrudCombo::class)->name('combos.create')->middleware('permission:create combos');
     Route::livewire('/combos/{combo}/edit', CrudCombo::class)->name('combos.edit')->middleware('permission:edit combos');
+
+    Route::livewire('/offers', OffersTable::class)->name('offers')->middleware('permission:get offers');
+    Route::livewire('/offers/create', CrudOffer::class)->name('offers.create')->middleware('permission:create offers');
+    Route::livewire('/offers/{offer}/edit', CrudOffer::class)->name('offers.edit')->middleware('permission:edit offers');
 
     Route::livewire('/categories', CategoriesTable::class)->name('categories')->middleware('permission:get categories');
     Route::livewire('/categories/create', CrudCategory::class)->name('categories.create')->middleware('permission:create categories');
