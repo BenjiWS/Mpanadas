@@ -54,20 +54,21 @@
             @endif
         </div>
     @else
-        {{-- Ajusta los combos por página a columnas × 2 filas: la página cabe en pantalla y no quedan huecos --}}
-        <div class="grid gap-6 sm:grid-cols-[repeat(auto-fill,minmax(18rem,23rem))]" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage,toggleActive,perPage"
+        {{-- Columnas según el ancho mínimo de la tarjeta (máx. 23rem cada una); los combos por página = columnas × 2 filas, así la página cabe en pantalla y no quedan huecos --}}
+        <div class="grid gap-6 sm:grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage,toggleActive,perPage"
             x-data="{
                 timer: null,
                 sync() {
                     const columns = getComputedStyle(this.$el).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
-                    const perPage = columns * 2;
+                    // Con una sola columna (celular) se baja con scroll: 6 por página en vez de 2.
+                    const perPage = columns === 1 ? 6 : columns * 2;
                     if (perPage !== Number(this.$wire.perPage)) this.$wire.set('perPage', perPage);
                 },
             }"
             x-init="sync(); new ResizeObserver(() => { clearTimeout(timer); timer = setTimeout(() => sync(), 200); }).observe($el)">
             @foreach ($combos as $combo)
                 <article wire:key="combo-{{ $combo->id }}" aria-labelledby="combo-{{ $combo->id }}-name"
-                    class="group flex flex-col overflow-hidden rounded-xl border border-gray-400/70 dark:border-gray-700">
+                    class="group flex w-full flex-col sm:max-w-[23rem] overflow-hidden rounded-xl border border-gray-400/70 dark:border-gray-700">
                     <div class="p-5">
                         <div class="aspect-[16/9] overflow-hidden rounded-lg bg-brand-50 dark:bg-brand-500/10">
                             @if ($combo->image)

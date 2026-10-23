@@ -58,20 +58,21 @@
             @endif
         </div>
     @else
-        {{-- Ajusta las ofertas por página a columnas × 2 filas: la página cabe en pantalla y no quedan huecos --}}
-        <div class="grid gap-5 sm:grid-cols-[repeat(auto-fill,minmax(20rem,23rem))]" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage,perPage"
+        {{-- Columnas según el ancho mínimo de la tarjeta (máx. 23rem cada una); las ofertas por página = columnas × 2 filas, así la página cabe en pantalla y no quedan huecos --}}
+        <div class="grid gap-5 sm:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))]" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage,perPage"
             x-data="{
                 timer: null,
                 sync() {
                     const columns = getComputedStyle(this.$el).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
-                    const perPage = columns * 2;
+                    // Con una sola columna (celular) se baja con scroll: 6 por página en vez de 2.
+                    const perPage = columns === 1 ? 6 : columns * 2;
                     if (perPage !== Number(this.$wire.perPage)) this.$wire.set('perPage', perPage);
                 },
             }"
             x-init="sync(); new ResizeObserver(() => { clearTimeout(timer); timer = setTimeout(() => sync(), 200); }).observe($el)">
             @foreach ($offers as $offer)
                 <article wire:key="offer-{{ $offer->id }}" aria-labelledby="offer-{{ $offer->id }}-name"
-                    class="flex flex-col rounded-xl border border-gray-400 bg-cream px-7 pt-8 pb-7 dark:border-gray-700 dark:bg-white/[0.03]">
+                    class="flex w-full flex-col sm:max-w-[23rem] rounded-xl border border-gray-400 bg-cream px-7 pt-8 pb-7 dark:border-gray-700 dark:bg-white/[0.03]">
                     <p class="px-2 text-sm font-semibold text-brand-600 dark:text-brand-300">{{ $statusLabels[$offer->status()] }}</p>
 
                     <p class="mt-9 text-[4rem] leading-none font-light text-brand-600 tabular-nums dark:text-brand-300">
