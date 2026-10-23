@@ -59,7 +59,7 @@
         </div>
     @else
         {{-- Ajusta las ofertas por página a columnas × 2 filas: la página cabe en pantalla y no quedan huecos --}}
-        <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage,perPage"
+        <div class="grid gap-5 sm:grid-cols-[repeat(auto-fill,minmax(20rem,23rem))]" wire:loading.class="opacity-60" wire:target="search,setFilter,gotoPage,perPage"
             x-data="{
                 timer: null,
                 sync() {
