@@ -3,6 +3,7 @@
 namespace App\Livewire\Ingredients;
 
 use App\Livewire\Concerns\AuthorizesPermissions;
+use App\Livewire\Concerns\FormatsShortDates;
 use App\Livewire\Concerns\ReportsErrors;
 use App\Models\Ingredient;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,7 @@ use Livewire\Component;
 
 class CrudIngredient extends Component
 {
-    use AuthorizesPermissions, ReportsErrors;
+    use AuthorizesPermissions, FormatsShortDates, ReportsErrors;
 
     #[Locked]
     public $action = 'store';
@@ -68,7 +69,18 @@ class CrudIngredient extends Component
 
     public function render()
     {
-        return view('livewire.ingredients.crud-ingredient')->title($this->title);
+        $ingredient = $this->ingredient_id ? Ingredient::find($this->ingredient_id) : null;
+
+        return view('livewire.ingredients.crud-ingredient', [
+            // Dónde se usa: productos que lo llevan por defecto y productos que lo ofrecen como extra.
+            'defaultIn' => $ingredient?->products()->orderBy('name')->get() ?? collect(),
+            'extraIn' => $ingredient?->extraForProducts()->withPivot('price')->orderBy('name')->get() ?? collect(),
+            'salesCount' => $ingredient?->saleItemIngredients()->count() ?? 0,
+            // Motivo por el que no se puede eliminar, para explicarlo antes de tocar el botón.
+            'deleteBlocker' => $ingredient ? $this->cannotDelete($ingredient) : null,
+            'createdAt' => $this->shortDate($ingredient?->created_at),
+            'updatedAt' => $this->shortDate($ingredient?->updated_at),
+        ])->title($this->title);
     }
 
     public function store()
