@@ -3,6 +3,7 @@
 namespace App\Livewire\Products;
 
 use App\Livewire\Concerns\AuthorizesPermissions;
+use App\Livewire\Concerns\FitsCardGrid;
 use App\Livewire\Concerns\ReportsErrors;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,7 @@ use Livewire\WithPagination;
 #[Title('Productos')]
 class ProductsTable extends Component
 {
-    use AuthorizesPermissions, ReportsErrors, WithPagination;
+    use AuthorizesPermissions, FitsCardGrid, ReportsErrors, WithPagination;
 
     public $search = '';
 
@@ -26,6 +27,12 @@ class ProductsTable extends Component
      * tarjetas caben a lo ancho: la página cabe en pantalla y no queda con huecos.
      */
     public $perPage = 6;
+
+    public function mount()
+    {
+        // Misma medida que el grid de la vista: minmax(18rem, 1fr) con gap-6.
+        $this->perPage = $this->cardsPerPage(288, 24);
+    }
 
     public function updatedPerPage()
     {

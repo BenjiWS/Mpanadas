@@ -20,6 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
+
+        // La escribe el navegador (layouts/app.blade.php) con el ancho del contenido; no lleva datos sensibles.
+        $middleware->encryptCookies(except: ['grid_width']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

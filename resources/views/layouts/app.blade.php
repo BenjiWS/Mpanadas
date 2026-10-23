@@ -13,6 +13,23 @@
 
         @include('layouts.partials.theme')
 
+        {{-- Guarda el ancho del contenido en la cookie grid_width: con ella el servidor calcula cuántas
+             tarjetas caben por página desde el primer dibujo (App\Livewire\Concerns\FitsCardGrid) --}}
+        <script>
+            (() => {
+                let timer;
+                const save = () => {
+                    const main = document.getElementById('contenido');
+                    if (! main) return;
+                    const style = getComputedStyle(main);
+                    const width = main.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+                    document.cookie = `grid_width=${Math.round(width)}; path=/; max-age=31536000; SameSite=Lax`;
+                };
+                document.addEventListener('DOMContentLoaded', save);
+                window.addEventListener('resize', () => { clearTimeout(timer); timer = setTimeout(save, 300); });
+            })();
+        </script>
+
         {{-- Store de Alpine para abrir/cerrar el sidebar --}}
         <script>
             document.addEventListener('alpine:init', () => {

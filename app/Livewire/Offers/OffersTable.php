@@ -3,6 +3,7 @@
 namespace App\Livewire\Offers;
 
 use App\Livewire\Concerns\AuthorizesPermissions;
+use App\Livewire\Concerns\FitsCardGrid;
 use App\Models\Offer;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -11,7 +12,7 @@ use Livewire\WithPagination;
 #[Title('Ofertas')]
 class OffersTable extends Component
 {
-    use AuthorizesPermissions, WithPagination;
+    use AuthorizesPermissions, FitsCardGrid, WithPagination;
 
     public $search = '';
 
@@ -23,6 +24,12 @@ class OffersTable extends Component
      * tarjetas caben a lo ancho: la página cabe en pantalla y no queda con huecos.
      */
     public $perPage = 6;
+
+    public function mount()
+    {
+        // Misma medida que el grid de la vista: minmax(20rem, 1fr) con gap-5.
+        $this->perPage = $this->cardsPerPage(320, 20);
+    }
 
     public function updatedPerPage()
     {
