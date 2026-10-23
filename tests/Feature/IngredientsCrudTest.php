@@ -80,10 +80,12 @@ class IngredientsCrudTest extends TestCase
     {
         $ingredient = Ingredient::create(['name' => 'Temporal', 'extra_price' => 0]);
 
-        Livewire::actingAs($this->admin)->test(IngredientsTable::class)
-            ->call('destroyConfirm', $ingredient->id)
+        // Se elimina desde el formulario de edición.
+        Livewire::actingAs($this->admin)->test(CrudIngredient::class, ['ingredient' => $ingredient])
+            ->assertSeeHtml('wire:click="destroyConfirm"')
+            ->call('destroyConfirm')
             ->assertDispatched('swalConfirm')
-            ->call('destroy', $ingredient->id)
+            ->call('destroy')
             ->assertDispatched('swalmodal');
 
         $this->assertModelMissing($ingredient);
@@ -94,21 +96,29 @@ class IngredientsCrudTest extends TestCase
         $ingredient = Ingredient::create(['name' => 'Queso', 'extra_price' => 0.5]);
         Product::create(['name' => 'Humita', 'price' => 2.5])->extras()->attach($ingredient);
 
-        Livewire::actingAs($this->admin)->test(IngredientsTable::class)
-            ->call('destroyConfirm', $ingredient->id)
+        Livewire::actingAs($this->admin)->test(CrudIngredient::class, ['ingredient' => $ingredient])
+            ->call('destroyConfirm')
             ->assertNotDispatched('swalConfirm')
-            ->call('destroy', $ingredient->id);
+            ->call('destroy');
 
         $this->assertModelExists($ingredient);
     }
 
-    public function test_toggle_active(): void
+    public function test_filters_and_stats(): void
     {
-        $ingredient = Ingredient::create(['name' => 'Queso', 'extra_price' => 0.5]);
+        $queso = Ingredient::create(['name' => 'Queso', 'extra_price' => 0.5, 'description' => 'Mozzarella rallada']);
+        Product::create(['name' => 'Humita', 'price' => 2.5])->extras()->attach($queso);
+        Ingredient::create(['name' => 'Panceta', 'extra_price' => 0.7, 'is_active' => false]);
 
         Livewire::actingAs($this->admin)->test(IngredientsTable::class)
-            ->call('toggleActive', $ingredient->id);
-
-        $this->assertFalse($ingredient->fresh()->is_active);
+            ->assertViewHas('stats', ['ingredients' => 2, 'extras' => 1, 'active' => 1])
+            ->assertSee('Mozzarella rallada')
+            ->assertSee('1 producto')
+            ->call('setFilter', 'inactivos')
+            ->assertSee('Panceta')
+            ->assertDontSee('Queso')
+            ->call('setFilter', 'activos')
+            ->assertSee('Queso')
+            ->assertDontSee('Panceta');
     }
 }
