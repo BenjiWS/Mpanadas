@@ -3,6 +3,8 @@
 namespace App\Livewire\Users;
 
 use App\Livewire\Concerns\AuthorizesPermissions;
+use App\Livewire\Concerns\DescribesRoleAbilities;
+use App\Livewire\Concerns\FormatsShortDates;
 use App\Livewire\Concerns\ReportsErrors;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +16,7 @@ use Spatie\Permission\Models\Role;
 
 class CrudUser extends Component
 {
-    use AuthorizesPermissions, ReportsErrors;
+    use AuthorizesPermissions, DescribesRoleAbilities, FormatsShortDates, ReportsErrors;
 
     #[Locked]
     public $action = 'store';
@@ -137,9 +139,15 @@ class CrudUser extends Component
             ? Role::orderBy('name')->get()
             : Role::where('name', '!=', 'Administrador')->orderBy('name')->get();
 
+        $user = $this->user_id ? User::find($this->user_id) : null;
+
         return view('livewire.users.crud-user', [
             'roles' => $roles,
             'isSelf' => $this->isSelf(),
+            // Lo que puede hacer con el rol elegido (se actualiza al cambiar el rol).
+            'abilities' => $this->roleAbilities($this->role_id ? Role::with('permissions')->find($this->role_id) : null),
+            'createdAt' => $this->shortDate($user?->created_at),
+            'updatedAt' => $this->shortDate($user?->updated_at),
         ])->title($this->title);
     }
 

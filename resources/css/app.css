@@ -195,9 +195,10 @@
 
 /* Botones del dashboard: btn + una variante.
    primary = acción principal de un formulario (relleno), outline = acción de un listado (Añadir…),
-   ghost = acción secundaria (Cancelar), danger = acción destructiva. */
+   ghost = acción secundaria (Cancelar), danger = acción destructiva. btn-sm achica cualquiera
+   (se resuelve dentro de btn con .btn.btn-sm, así gana sin depender del orden de las clases). */
 @utility btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg border px-5 py-2.5 text-base font-semibold whitespace-nowrap transition focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100;
+  @apply inline-flex items-center justify-center gap-2 rounded-lg border px-5 py-2.5 text-base font-semibold whitespace-nowrap transition focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100 [&.btn-sm]:px-4 [&.btn-sm]:py-2 [&.btn-sm]:text-sm;
 }
 
 @utility btn-primary {

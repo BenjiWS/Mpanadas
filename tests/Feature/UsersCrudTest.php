@@ -94,6 +94,29 @@ class UsersCrudTest extends TestCase
             ->assertSeeHtml('wire:submit="update"');
     }
 
+    public function test_form_summarizes_what_the_chosen_role_can_do(): void
+    {
+        $supervisor = Role::findByName('Supervisor', 'web');
+        $cajero = Role::findByName('Cajero', 'web');
+
+        Livewire::actingAs($this->admin)->test(CrudUser::class)
+            ->assertSee('Elige un rol para ver lo que podrá hacer.')
+            ->set('role_id', $supervisor->id)
+            ->assertSee('Ver, crear, editar y eliminar')
+            ->assertSee('Categorías')
+            // El cajero no tiene permisos en el seeder.
+            ->set('role_id', $cajero->id)
+            ->assertSee('Este rol todavía no tiene permisos.');
+    }
+
+    public function test_profile_shows_identity_card_and_own_abilities(): void
+    {
+        $this->actingAs($this->admin)->get('/profile')->assertOk()
+            ->assertSee('Así te ve el equipo')
+            ->assertSee('Lo que puedes hacer')
+            ->assertSee('Ver, crear, editar, eliminar y asignar roles');
+    }
+
     public function test_update_keeps_password_when_blank(): void
     {
         $user = User::factory()->create()->assignRole('Cajero');

@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Concerns\DescribesRoleAbilities;
+use App\Livewire\Concerns\FormatsShortDates;
 use Laravel\Fortify\Contracts\UpdatesUserPasswords;
 use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
 use Livewire\Attributes\Title;
@@ -10,6 +12,8 @@ use Livewire\Component;
 #[Title('Mi perfil')]
 class Profile extends Component
 {
+    use DescribesRoleAbilities, FormatsShortDates;
+
     public string $name = '';
 
     public string $lastname = '';
@@ -87,6 +91,13 @@ class Profile extends Component
 
     public function render()
     {
-        return view('livewire.profile');
+        $user = auth()->user();
+
+        return view('livewire.profile', [
+            'roleName' => $user->getRoleNames()->first(),
+            // Lo que puede hacer con su rol, en lenguaje simple.
+            'abilities' => $this->roleAbilities($user->roles()->with('permissions')->first()),
+            'createdAt' => $this->shortDate($user->created_at),
+        ]);
     }
 }
