@@ -47,9 +47,14 @@ class MenuHelper
         ];
     }
 
+    /**
+     * La página está abierta o es una de sus subpáginas (crear, editar): /products también marca /products/1/edit.
+     */
     public static function isActive($path)
     {
-        return request()->is(ltrim($path, '/'));
+        $path = ltrim($path, '/');
+
+        return request()->is($path) || request()->is($path.'/*');
     }
 
     public static function getIconSvg($iconName)

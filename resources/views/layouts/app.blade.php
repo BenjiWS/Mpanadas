@@ -63,6 +63,12 @@
         </a>
 
         <div class="min-h-screen xl:flex sidebar-expanded" x-data :class="{ 'sidebar-expanded': $store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen }">
+            {{-- Corre antes de dibujar el menú: aplica el mismo estado que calcula Alpine (store sidebar) para que no salte al cargar --}}
+            <script>
+                if (window.innerWidth < 1280 || localStorage.getItem('sidebarExpanded') === 'false') {
+                    document.currentScript.parentElement.classList.remove('sidebar-expanded');
+                }
+            </script>
             @include('layouts.backdrop')
             @include('layouts.sidebar')
 

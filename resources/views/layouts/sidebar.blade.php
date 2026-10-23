@@ -7,7 +7,7 @@
 @endphp
 
 <aside id="sidebar"
-    class="fixed flex flex-col mt-0 top-0 px-5 start-0 bg-cream dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-99999 ltr:border-r rtl:border-l border-gray-200 w-[90px] [.sidebar-expanded_&]:min-w-[290px]"
+    class="fixed flex flex-col mt-0 top-0 px-5 start-0 bg-cream dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-99999 ltr:border-r rtl:border-l border-gray-200 w-[90px] [.sidebar-expanded_&]:min-w-[290px] max-xl:-translate-x-full max-xl:rtl:translate-x-full"
     x-data="{
         openSubmenus: {},
         init() {
@@ -49,14 +49,12 @@
             return window.location.pathname === path || '{{ $currentPath }}' === path.replace(/^\//, '');
         }
     }"
-    :class="{
-        'translate-x-0': $store.sidebar.isMobileOpen,
-        'max-xl:-translate-x-full max-xl:rtl:translate-x-full': !$store.sidebar.isMobileOpen
-    }"
+    {{-- En celular el menú arranca escondido desde el HTML (sin esperar a Alpine) y solo se muestra al abrirlo --}}
+    :class="{ 'max-xl:translate-x-0! max-xl:rtl:translate-x-0!': $store.sidebar.isMobileOpen }"
     @mouseenter="if (!$store.sidebar.isExpanded) $store.sidebar.setHovered(true)"
     @mouseleave="$store.sidebar.setHovered(false)">
     <!-- Logo Section -->
-    <div class="pt-6 pb-5 mb-5 flex items-center gap-2 border-b border-gray-800/80 dark:border-gray-700" :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'justify-center' : 'justify-between'">
+    <div class="pt-6 pb-5 mb-5 flex items-center justify-center gap-2 border-b border-gray-800/80 dark:border-gray-700 [.sidebar-expanded_&]:justify-between">
         <x-common.brand-logo text-class="hidden [.sidebar-expanded_&]:block" />
     </div>
 
@@ -67,18 +65,12 @@
                 @foreach ($menuGroups as $groupIndex => $menuGroup)
                     <div>
                         <!-- Menu Group Title -->
-                        <h2 class="mb-2 px-3 text-[11px] font-medium tracking-wider uppercase flex leading-[20px] text-gray-600 dark:text-gray-400"
-                            :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
-                            'lg:justify-center' : 'justify-start'">
-                            <template
-                                x-if="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen">
-                                <span>{{ __($menuGroup['title']) }}</span>
-                            </template>
-                            <template x-if="!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M4.25 12C4.25 11.5858 4.58579 11.25 5 11.25H19C19.4142 11.25 19.75 11.5858 19.75 12C19.75 12.4142 19.4142 12.75 19 12.75H5C4.58579 12.75 4.25 12.4142 4.25 12Z" fill="currentColor"/>
-                                </svg>
-                            </template>
+                        {{-- Título si el menú está abierto, una raya si está colapsado: se resuelve con CSS para que no salte al cargar --}}
+                        <h2 class="mb-2 px-3 text-[11px] font-medium tracking-wider uppercase flex justify-center leading-[20px] text-gray-600 dark:text-gray-400 [.sidebar-expanded_&]:justify-start">
+                            <span class="hidden [.sidebar-expanded_&]:inline">{{ __($menuGroup['title']) }}</span>
+                            <svg class="[.sidebar-expanded_&]:hidden" width="24" height="20" viewBox="0 2 24 20" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M4.25 12C4.25 11.5858 4.58579 11.25 5 11.25H19C19.4142 11.25 19.75 11.5858 19.75 12C19.75 12.4142 19.4142 12.75 19 12.75H5C4.58579 12.75 4.25 12.4142 4.25 12Z" fill="currentColor"/>
+                            </svg>
                         </h2>
 
                         <!-- Menu Items -->
@@ -171,36 +163,29 @@
                                         </div>
                                     @elseif (empty($item['path']))
                                         <!-- Página aún no disponible -->
-                                        <span class="menu-item cursor-not-allowed text-gray-400 dark:text-gray-500" aria-disabled="true" title="{{ __('Disponible próximamente') }}"
-                                            :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:justify-center' : 'xl:justify-start'">
+                                        <span class="menu-item cursor-not-allowed text-gray-400 xl:justify-center dark:text-gray-500 [.sidebar-expanded_&]:xl:justify-start" aria-disabled="true" title="{{ __('Disponible próximamente') }}">
                                             <span class="text-gray-400 dark:text-gray-500">{!! MenuHelper::getIconSvg($item['icon']) !!}</span>
-                                            <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
-                                                class="menu-item-text flex flex-1 items-center justify-between gap-2">
+                                            <span class="menu-item-text hidden flex-1 items-center justify-between gap-2 [.sidebar-expanded_&]:flex">
                                                 {{ __($item['name']) }}
                                                 <span class="rounded-sm bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-gray-500 dark:bg-white/5 dark:text-gray-400">{{ __('Pronto') }}</span>
                                             </span>
                                         </span>
                                     @else
                                         <!-- Simple Menu Item -->
-                                        <a href="{{ $item['path'] }}" class="menu-item group"
-                                            :class="[
-                                                isActive('{{ $item['path'] }}') ? 'menu-item-active' :
-                                                'menu-item-inactive',
-                                                (!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
-                                                'xl:justify-center' :
-                                                'xl:justify-start'
-                                            ]">
+                                        @php $active = MenuHelper::isActive($item['path']); @endphp
+                                        <a href="{{ $item['path'] }}" @if ($active) aria-current="page" @endif
+                                            @class([
+                                                'menu-item group xl:justify-center [.sidebar-expanded_&]:xl:justify-start',
+                                                'menu-item-active' => $active,
+                                                'menu-item-inactive' => ! $active,
+                                            ])>
                                             <!-- Left Icon -->
-                                            <span :class="isActive('{{ $item['path'] }}') ?
-                                                'menu-item-icon-active' :
-                                                'menu-item-icon-inactive'">
+                                            <span @class(['menu-item-icon-active' => $active, 'menu-item-icon-inactive' => ! $active])>
                                                 {!! MenuHelper::getIconSvg($item['icon']) !!}
                                             </span>
 
                                             <!-- Item Text -->
-                                            <span
-                                                x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
-                                                class="menu-item-text flex items-center gap-2">
+                                            <span class="menu-item-text hidden items-center gap-2 [.sidebar-expanded_&]:flex">
                                                 {{ __($item['name']) }}
                                                 @if (!empty($item['new']))
                                                     <span
