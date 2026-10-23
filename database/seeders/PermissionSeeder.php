@@ -21,10 +21,10 @@ class PermissionSeeder extends Seeder
         $type_model = config('constants.type_model');
         $type_description = config('constants.type_description');
 
-        Permission::create(['name' => 'get categories', 'description' => 'Visualizar Categorias', 'type' => $type_model['Categories'], 'type_description' => $type_description['Categorias']]);
-        Permission::create(['name' => 'create categories', 'description' => 'Registrar Categorias', 'type' => $type_model['Categories'], 'type_description' => $type_description['Categorias']]);
-        Permission::create(['name' => 'edit categories', 'description' => 'Editar Categorias', 'type' => $type_model['Categories'], 'type_description' => $type_description['Categorias']]);
-        Permission::create(['name' => 'delete categories', 'description' => 'Borrar Categorias', 'type' => $type_model['Categories'], 'type_description' => $type_description['Categorias']]);
+        Permission::create(['name' => 'get categories', 'description' => 'Visualizar Categorías', 'type' => $type_model['Categories'], 'type_description' => $type_description['Categorias']]);
+        Permission::create(['name' => 'create categories', 'description' => 'Registrar Categorías', 'type' => $type_model['Categories'], 'type_description' => $type_description['Categorias']]);
+        Permission::create(['name' => 'edit categories', 'description' => 'Editar Categorías', 'type' => $type_model['Categories'], 'type_description' => $type_description['Categorias']]);
+        Permission::create(['name' => 'delete categories', 'description' => 'Eliminar Categorías', 'type' => $type_model['Categories'], 'type_description' => $type_description['Categorias']]);
 
         Permission::create(['name' => 'get products', 'description' => 'Visualizar Productos', 'type' => $type_model['Products'], 'type_description' => $type_description['Productos']]);
         Permission::create(['name' => 'create products', 'description' => 'Registrar Productos', 'type' => $type_model['Products'], 'type_description' => $type_description['Productos']]);
