@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('image')->nullable(); // ruta en el disco public
             $table->decimal('price', 8, 2);
+            $table->boolean('is_active')->default(true); // permite sacar un combo de la carta sin borrarlo
             $table->timestamps();
             $table->softDeletes();
         });
@@ -25,6 +26,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('combo_id')->constrained('combos')->cascadeOnDelete();
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
+            $table->unsignedSmallInteger('quantity')->default(1); // unidades de ese producto (ej. 3 empanadas de carne)
             $table->timestamps();
         });
     }

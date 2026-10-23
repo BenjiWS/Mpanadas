@@ -34,6 +34,8 @@ return new class extends Migration
         Schema::create('product_extras', function (Blueprint $table) {
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->foreignId('ingredient_id')->constrained()->restrictOnDelete();
+            // Precio del extra en este producto; si es null se cobra ingredients.extra_price.
+            $table->decimal('price', 10, 2)->nullable();
             $table->primary(['product_id', 'ingredient_id']);
         });
     }
