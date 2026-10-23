@@ -56,10 +56,9 @@ class OffersTable extends Component
                 })
                 ->when($this->filter === 'vigentes', fn ($query) => $query->running())
                 ->when($this->filter === 'finalizadas', fn ($query) => $query->ended())
-                // Primero las que terminan antes; las finalizadas al final.
+                // En el orden en que se crearon; las finalizadas al final.
                 ->orderByRaw('ends_at < ?', [now()])
-                ->orderBy('ends_at')
-                ->orderBy('name')
+                ->orderBy('id')
                 ->paginate($this->perPage),
         ]);
     }
