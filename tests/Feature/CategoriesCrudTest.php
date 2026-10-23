@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Livewire\Categories\CategoriesTable;
 use App\Livewire\Categories\CrudCategory;
 use App\Models\Category;
+use App\Models\Offer;
 use App\Models\Product;
 use App\Models\User;
 use Database\Seeders\PermissionSeeder;
@@ -142,6 +143,27 @@ class CategoriesCrudTest extends TestCase
             ->set('search', 'cuchillo')
             ->assertSee('Carne')
             ->assertDontSee('Bebidas');
+    }
+
+    public function test_edit_shows_menu_preview_with_products_and_offers(): void
+    {
+        $category = Category::create(['name' => 'Carne', 'description' => 'Picada o a cuchillo']);
+        $category->products()->attach(Product::create(['name' => 'Empanada de carne', 'price' => 2.5]));
+        $offer = Offer::create(['name' => 'Para compartir', 'discount_type' => 'percentage', 'discount_value' => 15, 'starts_at' => now()->subDay(), 'ends_at' => now()->addMonth()]);
+        $offer->categories()->attach($category);
+
+        Livewire::actingAs($this->admin)->test(CrudCategory::class, ['category' => $category])
+            ->assertSee('Así se ve en la carta')
+            ->assertSee('Empanada de carne')
+            ->assertSee('$ 2,50')
+            ->assertSee('Para compartir')
+            ->assertSee('1 oferta vigente')
+            // La zona para eliminar explica antes por qué no se puede.
+            ->assertSee('Tiene 1 producto. Muévelos a otra categoría antes de eliminarla');
+
+        // Al crear todavía no hay productos: se muestra una guía.
+        Livewire::actingAs($this->admin)->test(CrudCategory::class)
+            ->assertSee('Los productos que le asignes aparecerán aquí.');
     }
 
     public function test_delete_requires_permission(): void

@@ -66,7 +66,17 @@ class CrudCategory extends Component
 
     public function render()
     {
-        return view('livewire.categories.crud-category')->title($this->title);
+        $category = $this->category_id ? Category::find($this->category_id) : null;
+
+        return view('livewire.categories.crud-category', [
+            // Para la vista previa de la carta y para explicar antes de eliminar.
+            'products' => $category?->products()->orderBy('name')->get() ?? collect(),
+            // Ofertas sin finalizar que incluyen la categoría (vigentes, programadas o pausadas).
+            'offers' => $category?->offers()->where('ends_at', '>=', now())->orderBy('starts_at')->get() ?? collect(),
+            // Sin el punto de las abreviaturas en español ("oct." → "oct").
+            'createdAt' => str_replace('.', '', (string) $category?->created_at?->locale('es')->translatedFormat('j M Y')),
+            'updatedAt' => str_replace('.', '', (string) $category?->updated_at?->locale('es')->translatedFormat('j M Y')),
+        ])->title($this->title);
     }
 
     public function store()
