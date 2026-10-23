@@ -3,7 +3,7 @@
         <x-slot:subtitle>Tu información y la seguridad de tu cuenta en un solo lugar.</x-slot:subtitle>
         <x-slot:actions>
             <button type="submit" form="profile-form" wire:loading.attr="disabled" wire:target="updateProfile"
-                class="inline-flex items-center gap-2 rounded-lg border border-brand-500 bg-white/50 px-5 py-2.5 text-base font-semibold text-brand-600 transition hover:bg-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 active:scale-[0.98] disabled:opacity-60 dark:bg-transparent dark:text-brand-300 dark:hover:bg-white/5">
+                class="btn btn-primary">
                 <span wire:loading.remove wire:target="updateProfile">Guardar cambios</span>
                 <span wire:loading wire:target="updateProfile">Guardando…</span>
             </button>
@@ -12,7 +12,7 @@
 
     <div class="grid gap-7 lg:grid-cols-[minmax(0,1.8fr)_minmax(0,1fr)] lg:items-start">
         {{-- Información personal --}}
-        <section aria-labelledby="info-titulo" class="rounded-xl border border-gray-400/70 p-6 sm:p-8 dark:border-gray-700">
+        <section aria-labelledby="info-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
             <h2 id="info-titulo" class="text-xl font-bold tracking-tight text-gray-800 dark:text-white/90">Información personal</h2>
 
             <span class="mt-6 flex size-20 items-center justify-center rounded-full bg-brand-200 text-2xl font-bold text-gray-800 dark:bg-brand-500/20 dark:text-brand-200" aria-hidden="true">
@@ -40,7 +40,7 @@
         </section>
 
         {{-- Seguridad de la cuenta --}}
-        <section aria-labelledby="seguridad-titulo" class="rounded-xl border border-gray-400/70 p-6 sm:p-8 dark:border-gray-700">
+        <section aria-labelledby="seguridad-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
             <h2 id="seguridad-titulo" class="text-xl font-bold tracking-tight text-gray-800 dark:text-white/90">Seguridad de la cuenta</h2>
 
             @if ($changingPassword)

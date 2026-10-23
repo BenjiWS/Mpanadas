@@ -1,20 +1,20 @@
 <div class="space-y-6">
     <x-common.page-band title="Usuarios">
         <x-slot:subtitle>
-            {{ $users->total() }} {{ $users->total() === 1 ? 'usuario' : 'usuarios' }}
+            Quién entra al sistema y con qué rol.
         </x-slot:subtitle>
         @can('create users')
             <x-slot:actions>
                 <a href="{{ route('users.create') }}"
-                    class="inline-flex items-center gap-2 rounded-lg border border-brand-500 px-4 py-2 text-base text-brand-700 transition hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 active:scale-[0.98] dark:text-brand-300">
-                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-                    Nuevo usuario
+                    class="btn btn-outline">
+                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                    Añadir usuario
                 </a>
             </x-slot:actions>
         @endcan
     </x-common.page-band>
 
-    <section aria-labelledby="listado-titulo" class="rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <section aria-labelledby="listado-titulo" class="overflow-hidden rounded-xl border border-gray-400 dark:border-gray-700">
         <div class="flex flex-col gap-3 px-5 pt-5 pb-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <h2 id="listado-titulo" class="text-lg font-semibold text-gray-800 dark:text-white/90">Listado</h2>
 

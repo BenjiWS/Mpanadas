@@ -8,7 +8,7 @@
         @can('create categories')
             <x-slot:actions>
                 <a href="{{ route('categories.create') }}"
-                    class="inline-flex items-center gap-2 rounded-lg border border-brand-500 bg-gray-25 px-5 py-3 text-base font-semibold text-brand-600 transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 active:scale-[0.98] dark:bg-transparent dark:text-brand-300 dark:hover:bg-white/5">
+                    class="btn btn-outline">
                     <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
                     Añadir categoría
                 </a>
@@ -85,7 +85,7 @@
                                     @if ($category->description)
                                         {{ $category->description }}
                                     @else
-                                        <span class="text-gray-500">Sin descripción</span>
+                                        <span class="text-gray-600 dark:text-gray-400">Sin descripción</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-5 tabular-nums">{{ $category->products_count }}</td>

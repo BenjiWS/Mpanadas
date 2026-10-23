@@ -31,20 +31,12 @@
             {{ $action === 'store' ? 'Arma la promoción y mira cómo queda en la carta.' : 'Los cambios se ven en la vista previa antes de guardar.' }}
         </x-slot:subtitle>
         <x-slot:actions>
-            @if ($action === 'edit')
-                @can('delete offers')
-                    <button type="button" wire:click="destroyConfirm"
-                        class="rounded-lg px-4 py-2 text-base text-error-600 transition hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error-500 dark:text-error-500">
-                        Eliminar
-                    </button>
-                @endcan
-            @endif
             <a href="{{ route('offers') }}"
-                class="rounded-lg px-4 py-2 text-base text-gray-700 transition hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-gray-300">
+                class="btn btn-ghost">
                 Cancelar
             </a>
             <button type="submit" wire:loading.attr="disabled" wire:target="{{ $submit }}"
-                class="inline-flex items-center gap-2 rounded-lg border border-brand-500 bg-white/50 px-5 py-2.5 text-base font-semibold text-brand-600 transition hover:bg-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 active:scale-[0.98] disabled:opacity-60 dark:bg-transparent dark:text-brand-300 dark:hover:bg-white/5">
+                class="btn btn-primary">
                 <span wire:loading.remove wire:target="{{ $submit }}">{{ $action === 'store' ? 'Crear oferta' : 'Guardar cambios' }}</span>
                 <span wire:loading wire:target="{{ $submit }}">Guardando…</span>
             </button>
@@ -54,7 +46,7 @@
     <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start xl:grid-cols-[minmax(0,1fr)_24rem]">
         <div class="space-y-8">
             {{-- 01 · Datos y descuento --}}
-            <section aria-labelledby="datos-titulo" class="rounded-2xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
+            <section aria-labelledby="datos-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
                 <div class="flex items-center gap-4">
                     <span class="{{ $sectionNumber }}" aria-hidden="true">01</span>
                     <h2 id="datos-titulo" class="{{ $sectionTitle }}">Oferta y descuento</h2>
@@ -111,7 +103,7 @@
             </section>
 
             {{-- 02 · Vigencia y horario --}}
-            <section aria-labelledby="vigencia-titulo" class="rounded-2xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
+            <section aria-labelledby="vigencia-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
                 <div class="flex items-center gap-4">
                     <span class="{{ $sectionNumber }}" aria-hidden="true">02</span>
                     <h2 id="vigencia-titulo" class="{{ $sectionTitle }}">Vigencia y horario</h2>
@@ -189,7 +181,7 @@
             </section>
 
             {{-- 03 · A qué aplica --}}
-            <section aria-labelledby="aplica-titulo" class="rounded-2xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
+            <section aria-labelledby="aplica-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
                 <div class="flex items-center gap-4">
                     <span class="{{ $sectionNumber }}" aria-hidden="true">03</span>
                     <div>
@@ -304,6 +296,11 @@
             </div>
         </aside>
     </div>
+    @if ($action === 'edit')
+        @can('delete offers')
+            <x-common.danger-zone title="Eliminar oferta" text="Deja de aplicarse y sale de la lista. Las ventas que ya la usaron la conservan. Para frenarla un tiempo, páusala." button="Eliminar oferta" />
+        @endcan
+    @endif
 </form>
 
 @push('scripts')

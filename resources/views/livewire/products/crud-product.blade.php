@@ -17,11 +17,11 @@
         </x-slot:subtitle>
         <x-slot:actions>
             <a href="{{ route('products') }}"
-                class="rounded-lg px-4 py-2 text-base text-gray-700 transition hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-gray-300">
+                class="btn btn-ghost">
                 Cancelar
             </a>
             <button type="submit" wire:loading.attr="disabled" wire:target="{{ $submit }},image"
-                class="inline-flex items-center gap-2 rounded-lg border border-brand-500 bg-white/50 px-5 py-2.5 text-base font-semibold text-brand-600 transition hover:bg-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 active:scale-[0.98] disabled:opacity-60 dark:bg-transparent dark:text-brand-300 dark:hover:bg-white/5">
+                class="btn btn-primary">
                 <span wire:loading.remove wire:target="{{ $submit }}">{{ $action === 'store' ? 'Crear producto' : 'Guardar cambios' }}</span>
                 <span wire:loading wire:target="{{ $submit }}">Guardando…</span>
             </button>
@@ -32,7 +32,7 @@
         {{-- Columna principal: datos del producto e ingredientes --}}
         <div class="@container space-y-8">
             {{-- Formulario --}}
-            <div class="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-300/80 bg-white/70 dark:divide-gray-800 dark:border-gray-800 dark:bg-white/[0.03]">
+            <div class="divide-y divide-gray-200 overflow-hidden rounded-xl border border-gray-300/80 bg-white/70 dark:divide-gray-800 dark:border-gray-800 dark:bg-white/[0.03]">
 
                 {{-- 01 · Datos generales --}}
                 <section aria-labelledby="datos-titulo" class="p-6 sm:p-8">
@@ -104,7 +104,7 @@
 
             {{-- Ingredientes por defecto y extras, lado a lado cuando hay espacio --}}
             <div class="grid gap-8 @3xl:grid-cols-2 @3xl:items-start">
-                <div class="rounded-2xl border border-gray-300/80 bg-white/70 dark:border-gray-800 dark:bg-white/[0.03]">
+                <div class="rounded-xl border border-gray-300/80 bg-white/70 dark:border-gray-800 dark:bg-white/[0.03]">
                     {{-- 02 · Ingredientes por defecto --}}
                     <section aria-labelledby="default-titulo" class="p-6">
                         <div class="flex flex-wrap items-center gap-x-4 gap-y-3">
@@ -173,7 +173,7 @@
                     </section>
                 </div>
 
-                <div class="rounded-2xl border border-gray-300/80 bg-white/70 dark:border-gray-800 dark:bg-white/[0.03]">
+                <div class="rounded-xl border border-gray-300/80 bg-white/70 dark:border-gray-800 dark:bg-white/[0.03]">
                     {{-- 03 · Extras --}}
                     <section aria-labelledby="extras-titulo" class="p-6">
                         <div class="flex flex-wrap items-center gap-x-4 gap-y-3">
