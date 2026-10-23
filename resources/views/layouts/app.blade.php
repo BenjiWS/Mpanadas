@@ -56,6 +56,12 @@
         </script>
     </head>
     <body>
+        {{-- Para teclado y lectores de pantalla: salta el menú y el encabezado --}}
+        <a href="#contenido"
+            class="sr-only rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-999999">
+            Saltar al contenido
+        </a>
+
         <div class="min-h-screen xl:flex sidebar-expanded" x-data :class="{ 'sidebar-expanded': $store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen }">
             @include('layouts.backdrop')
             @include('layouts.sidebar')
@@ -63,7 +69,7 @@
             <div class="flex-1 ml-0 xl:ml-[90px] [.sidebar-expanded_&]:xl:ml-[290px] transition-all duration-300 ease-in-out">
                 @include('layouts.app-header')
 
-                <main class="p-4 md:p-6">
+                <main id="contenido" tabindex="-1" class="p-4 focus:outline-hidden md:p-6">
                     {{ $slot }}
                 </main>
             </div>
