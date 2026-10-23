@@ -44,15 +44,17 @@
     </x-common.page-band>
 
     <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start xl:grid-cols-[minmax(0,1fr)_24rem]">
-        <div class="space-y-8">
+        <div class="@container space-y-8">
+            {{-- 01 y 02 en la misma fila cuando la columna mide 64rem o más; las tarjetas quedan de igual alto --}}
+            <div class="grid gap-8 @5xl:grid-cols-2">
             {{-- 01 · Datos y descuento --}}
-            <section aria-labelledby="datos-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
+            <section aria-labelledby="datos-titulo" class="@container/section rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
                 <div class="flex items-center gap-4">
                     <span class="{{ $sectionNumber }}" aria-hidden="true">01</span>
                     <h2 id="datos-titulo" class="{{ $sectionTitle }}">Oferta y descuento</h2>
                 </div>
 
-                <div class="mt-6 space-y-6 sm:pl-13">
+                <div class="mt-6 space-y-6 @2xl/section:pl-13">
                     <x-form.input name="name" label="Nombre" wire:model="name" required autocomplete="off" placeholder="Ej. Tardes con sabor" />
 
                     <div>
@@ -67,7 +69,7 @@
                         @enderror
                     </div>
 
-                    <div class="grid gap-5 sm:grid-cols-[minmax(0,1fr)_11rem] sm:items-start">
+                    <div class="grid gap-5 @xl/section:grid-cols-[minmax(0,1fr)_11rem] @xl/section:items-start">
                         <div role="radiogroup" aria-labelledby="tipo-label">
                             <p id="tipo-label" class="{{ $fieldLabel }}">Tipo de descuento<span class="text-error-500">*</span></p>
                             {{-- Control segmentado --}}
@@ -96,21 +98,21 @@
                                 @enderror
                             </div>
                         @else
-                            <p class="text-sm text-gray-600 sm:pt-7 dark:text-gray-400">Lleva dos y paga uno: la segunda unidad sale gratis.</p>
+                            <p class="text-sm text-gray-600 @xl/section:pt-7 dark:text-gray-400">Lleva dos y paga uno: la segunda unidad sale gratis.</p>
                         @endif
                     </div>
                 </div>
             </section>
 
             {{-- 02 · Vigencia y horario --}}
-            <section aria-labelledby="vigencia-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
+            <section aria-labelledby="vigencia-titulo" class="@container/section rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
                 <div class="flex items-center gap-4">
                     <span class="{{ $sectionNumber }}" aria-hidden="true">02</span>
                     <h2 id="vigencia-titulo" class="{{ $sectionTitle }}">Vigencia y horario</h2>
                 </div>
 
-                <div class="mt-6 space-y-6 sm:pl-13">
-                    <div class="grid gap-5 sm:grid-cols-2">
+                <div class="mt-6 space-y-6 @2xl/section:pl-13">
+                    <div class="grid gap-5 @sm/section:grid-cols-2">
                         <div>
                             <label for="starts_at" class="{{ $fieldLabel }}">Desde<span class="text-error-500">*</span></label>
                             <input id="starts_at" type="date" wire:model.live="starts_at"
@@ -179,6 +181,7 @@
                     </div>
                 </div>
             </section>
+            </div>
 
             {{-- 03 · A qué aplica --}}
             <section aria-labelledby="aplica-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
