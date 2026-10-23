@@ -44,7 +44,8 @@ class RolesTable extends Component
                 ->orderBy('name')
                 ->paginate(9),
             // Nombre visible de cada módulo, para listar en la tarjeta los módulos a los que el rol tiene acceso.
-            'groups' => Permission::all()->groupBy('type')->map(fn ($permissions) => $permissions->first()->type_description),
+            'groups' => Permission::all()->groupBy('type')
+                ->map(fn ($permissions, $type) => config("constants.type_labels.$type", $permissions->first()->type_description)),
         ]);
     }
 

@@ -260,6 +260,18 @@ class ProductsCrudTest extends TestCase
             ->assertSet('perPage', 40);
     }
 
+    public function test_first_render_uses_the_grid_width_cookie(): void
+    {
+        // Sin cookie: 6 por página.
+        Livewire::actingAs($this->admin)->test(ProductsTable::class)->assertSet('perPage', 6);
+
+        // 1534px de contenido: 4 columnas de 18rem con gap-6 → 8 por página.
+        Livewire::withCookie('grid_width', '1534')->actingAs($this->admin)->test(ProductsTable::class)->assertSet('perPage', 8);
+
+        // Celular: una columna → 6 por página, se baja con scroll.
+        Livewire::withCookie('grid_width', '358')->actingAs($this->admin)->test(ProductsTable::class)->assertSet('perPage', 6);
+    }
+
     public function test_search_by_name_or_category(): void
     {
         $this->product();

@@ -8,20 +8,12 @@
             {{ $action === 'store' ? 'Los ingredientes se usan como extras en los productos.' : 'Actualiza los datos de este ingrediente.' }}
         </x-slot:subtitle>
         <x-slot:actions>
-            @if ($action === 'edit')
-                @can('delete ingredients')
-                    <button type="button" wire:click="destroyConfirm"
-                        class="rounded-lg px-4 py-2 text-base text-error-600 transition hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error-500 dark:text-error-500">
-                        Eliminar
-                    </button>
-                @endcan
-            @endif
             <a href="{{ route('ingredients') }}"
-                class="rounded-lg px-4 py-2 text-base text-gray-700 transition hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-gray-300">
+                class="btn btn-ghost">
                 Cancelar
             </a>
             <button type="submit" wire:loading.attr="disabled" wire:target="{{ $submit }}"
-                class="inline-flex items-center gap-2 rounded-lg border border-brand-500 bg-white/50 px-5 py-2.5 text-base font-semibold text-brand-600 transition hover:bg-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 active:scale-[0.98] disabled:opacity-60 dark:bg-transparent dark:text-brand-300 dark:hover:bg-white/5">
+                class="btn btn-primary">
                 <span wire:loading.remove wire:target="{{ $submit }}">{{ $action === 'store' ? 'Crear ingrediente' : 'Guardar cambios' }}</span>
                 <span wire:loading wire:target="{{ $submit }}">Guardando…</span>
             </button>
@@ -29,7 +21,7 @@
     </x-common.page-band>
 
     <div class="grid gap-7 lg:grid-cols-[minmax(0,1.8fr)_minmax(0,1fr)] lg:items-start">
-        <section aria-labelledby="datos-titulo" class="rounded-xl border border-gray-400/70 p-6 sm:p-8 dark:border-gray-700">
+        <section aria-labelledby="datos-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
             <h2 id="datos-titulo" class="text-xl font-bold tracking-tight text-gray-800 dark:text-white/90">Datos del ingrediente</h2>
 
             <div class="mt-6 space-y-5">
@@ -73,7 +65,7 @@
             </div>
         </section>
 
-        <section aria-labelledby="estado-titulo" class="rounded-xl border border-gray-400/70 p-6 sm:p-8 dark:border-gray-700">
+        <section aria-labelledby="estado-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
             <div class="flex items-center justify-between gap-4">
                 <h2 id="estado-titulo" class="text-xl font-bold tracking-tight text-gray-800 dark:text-white/90">Activo</h2>
                 <button type="button" role="switch" wire:click="$toggle('is_active')" aria-labelledby="estado-titulo" aria-describedby="estado-ayuda"
@@ -95,6 +87,11 @@
             </p>
         </section>
     </div>
+    @if ($action === 'edit')
+        @can('delete ingredients')
+            <x-common.danger-zone title="Eliminar ingrediente" text="Solo se puede eliminar si ningún producto lo usa. Si solo quieres dejar de ofrecerlo, desactívalo." button="Eliminar ingrediente" />
+        @endcan
+    @endif
 </form>
 
 @push('scripts')

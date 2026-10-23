@@ -23,4 +23,14 @@ return [
         'Usuarios' => 'Usuarios',
         'Roles' => 'Roles',
     ],
+    // Nombre con tildes que se muestra para cada grupo (los valores del enum van sin tildes).
+    'type_labels' => [
+        'Categories' => 'Categorías',
+        'Products' => 'Productos',
+        'Ingredients' => 'Ingredientes',
+        'Combos' => 'Combos',
+        'Offers' => 'Ofertas',
+        'Users' => 'Usuarios',
+        'Roles' => 'Roles',
+    ],
 ];
