@@ -142,12 +142,11 @@
                     </div>
                 @endif
             </article>
-
         </aside>
 
-        {{-- Contexto: debajo de la vista previa o, si hay espacio, en una tercera columna --}}
-        <aside aria-label="Contexto de la categoría" class="space-y-4 @[60rem]:col-start-2 @[60rem]:row-start-2 @[100rem]:col-start-3 @[100rem]:row-start-1 @[100rem]:pt-9">
-            @if ($action === 'edit')
+        {{-- Contexto (solo al editar): debajo de la vista previa o, si hay espacio, en una tercera columna --}}
+        @if ($action === 'edit')
+            <aside aria-label="Contexto de la categoría" class="space-y-4 @[60rem]:col-start-2 @[60rem]:row-start-2 @[100rem]:col-start-3 @[100rem]:row-start-1 @[100rem]:pt-9">
                 {{-- Ofertas que incluyen la categoría --}}
                 <section aria-labelledby="ofertas-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 px-6 py-5 dark:border-gray-800 dark:bg-white/[0.03]">
                     <h2 id="ofertas-titulo" class="text-sm font-semibold text-gray-800 dark:text-white/90">Ofertas que la incluyen</h2>
@@ -193,26 +192,8 @@
                         </div>
                     @endforeach
                 </dl>
-            @else
-                {{-- Guía breve al crear --}}
-                <section aria-labelledby="guia-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 px-6 py-5 dark:border-gray-800 dark:bg-white/[0.03]">
-                    <h2 id="guia-titulo" class="text-sm font-semibold text-gray-800 dark:text-white/90">Antes de crearla</h2>
-                    <ol class="mt-4 space-y-4 text-sm text-gray-600 dark:text-gray-400">
-                        @foreach ([
-                            'Usa un nombre corto: es el título de la sección en la carta.',
-                            'Un producto puede estar en varias categorías a la vez.',
-                            'Los productos se asignan desde el formulario de cada producto.',
-                            'Si una categoría deja de usarse, desactívala en lugar de borrarla.',
-                        ] as $index => $tip)
-                            <li class="flex gap-3">
-                                <span class="flex size-6 shrink-0 items-center justify-center rounded-md bg-brand-100 text-xs font-bold text-brand-700 tabular-nums dark:bg-brand-500/15 dark:text-brand-300" aria-hidden="true">{{ $index + 1 }}</span>
-                                <span class="pt-0.5">{{ $tip }}</span>
-                            </li>
-                        @endforeach
-                    </ol>
-                </section>
-            @endif
-        </aside>
+            </aside>
+        @endif
 
         {{-- Eliminar: explica antes de tocar el botón por qué no se puede --}}
         @if ($action === 'edit')
