@@ -45,11 +45,12 @@ class CategoriesCrudTest extends TestCase
         Livewire::actingAs($this->admin)->test(CrudCategory::class)
             ->assertSeeHtml('wire:submit="store"')
             ->set('name', 'Vegetarianas')
+            ->set('description', 'Sin carne, con todo el sabor')
             ->call('store')
             ->assertHasNoErrors()
             ->assertDispatched('swalmodal');
 
-        $this->assertDatabaseHas('categories', ['name' => 'Vegetarianas']);
+        $this->assertDatabaseHas('categories', ['name' => 'Vegetarianas', 'description' => 'Sin carne, con todo el sabor', 'is_active' => true]);
     }
 
     public function test_store_validates_name(): void
@@ -72,20 +73,24 @@ class CategoriesCrudTest extends TestCase
             ->assertSeeHtml('wire:submit="update"')
             ->assertSet('name', 'Polo')
             ->set('name', 'Pollo')
+            ->set('is_active', false)
             ->call('update')
             ->assertHasNoErrors();
 
         $this->assertSame('Pollo', $category->fresh()->name);
+        $this->assertFalse($category->fresh()->is_active);
     }
 
     public function test_destroy_asks_confirmation_then_deletes(): void
     {
         $category = Category::create(['name' => 'Temporal']);
 
-        Livewire::actingAs($this->admin)->test(CategoriesTable::class)
-            ->call('destroyConfirm', $category->id)
+        // Se elimina desde el formulario de edición.
+        Livewire::actingAs($this->admin)->test(CrudCategory::class, ['category' => $category])
+            ->assertSeeHtml('wire:click="destroyConfirm"')
+            ->call('destroyConfirm')
             ->assertDispatched('swalConfirm')
-            ->call('destroy', $category->id)
+            ->call('destroy')
             ->assertDispatched('swalmodal');
 
         $this->assertDatabaseMissing('categories', ['id' => $category->id]);
@@ -96,11 +101,11 @@ class CategoriesCrudTest extends TestCase
         $category = Category::create(['name' => 'Carne']);
         $category->products()->attach(Product::create(['name' => 'Empanada de carne', 'price' => 2.5]));
 
-        Livewire::actingAs($this->admin)->test(CategoriesTable::class)
-            ->call('destroyConfirm', $category->id)
+        Livewire::actingAs($this->admin)->test(CrudCategory::class, ['category' => $category])
+            ->call('destroyConfirm')
             ->assertNotDispatched('swalConfirm')
             ->assertDispatched('swalmodal')
-            ->call('destroy', $category->id);
+            ->call('destroy');
 
         $this->assertNotNull($category->fresh());
     }
@@ -114,5 +119,42 @@ class CategoriesCrudTest extends TestCase
             ->set('search', 'dul')
             ->assertSee('Dulces')
             ->assertDontSee('Carne');
+    }
+
+    public function test_filters_and_stats(): void
+    {
+        $carne = Category::create(['name' => 'Carne', 'description' => 'Picada o a cuchillo']);
+        $carne->products()->attach(Product::create(['name' => 'Empanada de carne', 'price' => 2.5]));
+        Category::create(['name' => 'Bebidas', 'is_active' => false]);
+
+        Livewire::actingAs($this->admin)->test(CategoriesTable::class)
+            ->assertViewHas('stats', ['categories' => 2, 'products' => 1, 'active' => 1])
+            ->assertSee('Picada o a cuchillo')
+            ->assertSee('2 resultados')
+            ->call('setFilter', 'inactivos')
+            ->assertSee('Bebidas')
+            ->assertDontSee('Picada o a cuchillo')
+            ->call('setFilter', 'activos')
+            ->assertSee('Carne')
+            ->assertDontSee('Bebidas')
+            // También busca en la descripción.
+            ->call('setFilter', 'todos')
+            ->set('search', 'cuchillo')
+            ->assertSee('Carne')
+            ->assertDontSee('Bebidas');
+    }
+
+    public function test_delete_requires_permission(): void
+    {
+        $supervisor = User::factory()->create()->assignRole('Supervisor');
+        $supervisor->roles->first()->revokePermissionTo('delete categories');
+        $category = Category::create(['name' => 'Temporal']);
+
+        Livewire::actingAs($supervisor)->test(CrudCategory::class, ['category' => $category])
+            ->assertDontSeeHtml('wire:click="destroyConfirm"')
+            ->call('destroy')
+            ->assertForbidden();
+
+        $this->assertNotNull($category->fresh());
     }
 }

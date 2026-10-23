@@ -1,11 +1,11 @@
-@props(['field', 'sortField', 'sortDirection'])
+@props(['field', 'sortField', 'sortDirection', 'base' => 'px-3 py-3 font-medium'])
 
 @php
     $active = $sortField === $field;
 @endphp
 
 {{-- Encabezado de tabla que ordena por columna; se usa con el trait WithSorting --}}
-<th scope="col" aria-sort="{{ $active ? ($sortDirection === 'asc' ? 'ascending' : 'descending') : 'none' }}" {{ $attributes->class('px-3 py-3 font-medium') }}>
+<th scope="col" aria-sort="{{ $active ? ($sortDirection === 'asc' ? 'ascending' : 'descending') : 'none' }}" {{ $attributes->class($base) }}>
     <button type="button" wire:click="sortBy('{{ $field }}')"
         class="group inline-flex items-center gap-1.5 rounded-sm hover:text-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 dark:hover:text-white/90">
         {{ $slot }}
