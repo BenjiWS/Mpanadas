@@ -16,10 +16,16 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('image')->nullable(); // ruta en el disco public
-            $table->enum('discount_type', ['percentage', 'fixed']); // App\Enums\DiscountType
+            // App\Enums\DiscountType; two_for_one (2 × 1) no usa discount_value.
+            $table->enum('discount_type', ['percentage', 'fixed', 'two_for_one']);
             $table->decimal('discount_value', 8, 2);
             $table->dateTime('starts_at');
             $table->dateTime('ends_at');
+            // Horario dentro de la vigencia: días ISO separados por coma (1 = lunes ... 7 = domingo)
+            // y franja horaria. Null = todos los días / todo el día.
+            $table->string('weekdays', 13)->nullable();
+            $table->time('start_time')->nullable();
+            $table->time('end_time')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
             $table->softDeletes();

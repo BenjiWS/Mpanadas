@@ -26,6 +26,10 @@ return new class extends Migration
         Schema::create($tableNames['permissions'], static function (Blueprint $table) {
             $table->id(); // permission id
             $table->string('name');
+            // Descripción visible del permiso y el grupo al que pertenece (config/constants.php).
+            $table->string('description');
+            $table->enum('type', array_keys(config('constants.type_model')));
+            $table->enum('type_description', array_keys(config('constants.type_description')));
             $table->string('guard_name');
             $table->timestamps();
 
@@ -42,6 +46,7 @@ return new class extends Migration
                 $table->index($columnNames['team_foreign_key'], 'roles_team_foreign_key_index');
             }
             $table->string('name');
+            $table->string('description')->nullable();
             $table->string('guard_name');
             $table->timestamps();
             if ($teams || config('permission.testing')) {
