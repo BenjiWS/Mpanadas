@@ -8,6 +8,14 @@
             {{ $action === 'store' ? 'Los ingredientes se usan como extras en los productos.' : 'Actualiza los datos de este ingrediente.' }}
         </x-slot:subtitle>
         <x-slot:actions>
+            @if ($action === 'edit')
+                @can('delete ingredients')
+                    <button type="button" wire:click="destroyConfirm"
+                        class="rounded-lg px-4 py-2 text-base text-error-600 transition hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error-500 dark:text-error-500">
+                        Eliminar
+                    </button>
+                @endcan
+            @endif
             <a href="{{ route('ingredients') }}"
                 class="rounded-lg px-4 py-2 text-base text-gray-700 transition hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-gray-300">
                 Cancelar
