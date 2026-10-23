@@ -3,6 +3,7 @@
 namespace App\Livewire\Categories;
 
 use App\Livewire\Concerns\AuthorizesPermissions;
+use App\Livewire\Concerns\FormatsShortDates;
 use App\Livewire\Concerns\ReportsErrors;
 use App\Models\Category;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,7 @@ use Livewire\Component;
 
 class CrudCategory extends Component
 {
-    use AuthorizesPermissions, ReportsErrors;
+    use AuthorizesPermissions, FormatsShortDates, ReportsErrors;
 
     #[Locked]
     public $action = 'store';
@@ -73,9 +74,8 @@ class CrudCategory extends Component
             'products' => $category?->products()->orderBy('name')->get() ?? collect(),
             // Ofertas sin finalizar que incluyen la categoría (vigentes, programadas o pausadas).
             'offers' => $category?->offers()->where('ends_at', '>=', now())->orderBy('starts_at')->get() ?? collect(),
-            // Sin el punto de las abreviaturas en español ("oct." → "oct").
-            'createdAt' => str_replace('.', '', (string) $category?->created_at?->locale('es')->translatedFormat('j M Y')),
-            'updatedAt' => str_replace('.', '', (string) $category?->updated_at?->locale('es')->translatedFormat('j M Y')),
+            'createdAt' => $this->shortDate($category?->created_at),
+            'updatedAt' => $this->shortDate($category?->updated_at),
         ])->title($this->title);
     }
 

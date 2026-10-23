@@ -19,13 +19,9 @@
         </x-slot:actions>
     </x-common.page-band>
 
-    {{-- Columnas según el ancho del contenido (container queries): una sola columna; formulario + vista previa
-         con contexto debajo; y en pantallas muy anchas el contexto pasa a una tercera columna. El formulario
-         nunca pasa de 46rem, así los campos no se estiran. --}}
-    <div class="@container">
-        <div class="grid items-start gap-8 @[60rem]:grid-cols-[minmax(0,46rem)_minmax(20rem,26rem)] @[100rem]:grid-cols-[minmax(0,46rem)_minmax(22rem,28rem)_minmax(20rem,26rem)]">
+    <x-common.form-layout>
         {{-- Datos --}}
-        <section aria-labelledby="datos-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 @[60rem]:col-start-1 @[60rem]:row-start-1 dark:border-gray-800 dark:bg-white/[0.03]">
+        <section aria-labelledby="datos-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 p-6 sm:p-8 dark:border-gray-800 dark:bg-white/[0.03]">
             <h2 id="datos-titulo" class="text-xl font-bold tracking-tight text-gray-800 dark:text-white/90">Datos de la categoría</h2>
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">El nombre y la descripción son los que se leen en la carta.</p>
 
@@ -49,36 +45,16 @@
                 </div>
 
                 {{-- Estado, dentro del mismo panel --}}
-                <div class="flex items-center justify-between gap-6 border-t border-gray-200 pt-6 dark:border-gray-800">
-                    <div>
-                        <p id="estado-titulo" class="text-sm font-semibold text-gray-800 dark:text-white/90">Visible en la carta</p>
-                        <p id="estado-ayuda" class="mt-0.5 text-sm text-gray-600 dark:text-gray-400">
-                            {{ $is_active ? 'Sus productos se muestran bajo esta categoría.' : 'Oculta: no aparece en la carta hasta reactivarla.' }}
-                        </p>
-                    </div>
-                    <button type="button" role="switch" wire:click="$toggle('is_active')" aria-labelledby="estado-titulo" aria-describedby="estado-ayuda"
-                        aria-checked="{{ $is_active ? 'true' : 'false' }}"
-                        @class([
-                            'relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
-                            'bg-brand-500' => $is_active,
-                            'bg-gray-300 dark:bg-gray-700' => ! $is_active,
-                        ])>
-                        <span @class([
-                            'inline-block size-5 rounded-full bg-white shadow-theme-xs transition-transform duration-200',
-                            'translate-x-[22px]' => $is_active,
-                            'translate-x-0.5' => ! $is_active,
-                        ])></span>
-                    </button>
-                </div>
+                <x-form.switch-row id="estado" title="Visible en la carta" model="is_active" :checked="$is_active"
+                    :help="$is_active ? 'Sus productos se muestran bajo esta categoría.' : 'Oculta: no aparece en la carta hasta reactivarla.'"
+                    class="border-t border-gray-200 pt-6 dark:border-gray-800" />
             </div>
         </section>
 
-        {{-- Vista previa en la carta + dónde se usa --}}
-        <aside aria-labelledby="preview-titulo" class="space-y-4 @[60rem]:col-start-2 @[60rem]:row-start-1" x-data>
-            <div class="flex items-baseline justify-between">
-                <h2 id="preview-titulo" class="text-sm font-semibold text-gray-700 dark:text-gray-300">Así se ve en la carta</h2>
-                <span class="text-theme-xs text-gray-500 dark:text-gray-400">Se actualiza al escribir</span>
-            </div>
+        {{-- Vista previa en la carta --}}
+        <x-slot:preview>
+        <aside aria-labelledby="preview-titulo" class="space-y-4" x-data>
+            <x-common.preview-heading>Así se ve en la carta</x-common.preview-heading>
 
             <article class="overflow-hidden rounded-xl border border-gray-300/80 bg-gray-25 dark:border-gray-800 dark:bg-white/[0.03]">
                 <div class="px-7 pt-8 pb-7 transition" :class="{ 'opacity-50 grayscale': ! $wire.is_active }">
@@ -143,10 +119,12 @@
                 @endif
             </article>
         </aside>
+        </x-slot:preview>
 
-        {{-- Contexto (solo al editar): debajo de la vista previa o, si hay espacio, en una tercera columna --}}
+        {{-- Contexto (solo al editar) --}}
+        <x-slot:context>
         @if ($action === 'edit')
-            <aside aria-label="Contexto de la categoría" class="space-y-4 @[60rem]:col-start-2 @[60rem]:row-start-2 @[100rem]:col-start-3 @[100rem]:row-start-1 @[100rem]:pt-9">
+            <aside aria-label="Contexto de la categoría" class="space-y-4">
                 {{-- Ofertas que incluyen la categoría --}}
                 <section aria-labelledby="ofertas-titulo" class="rounded-xl border border-gray-300/80 bg-white/70 px-6 py-5 dark:border-gray-800 dark:bg-white/[0.03]">
                     <h2 id="ofertas-titulo" class="text-sm font-semibold text-gray-800 dark:text-white/90">Ofertas que la incluyen</h2>
@@ -179,34 +157,29 @@
                 </section>
 
                 {{-- Datos de uso --}}
-                <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-gray-300/80 bg-gray-300/80 text-sm dark:border-gray-800 dark:bg-gray-800">
-                    @foreach ([
-                        ['Productos', $products->count()],
-                        ['Agotados', $products->where('available', false)->count()],
-                        ['Creada', $createdAt],
-                        ['Última edición', $updatedAt],
-                    ] as [$label, $value])
-                        <div class="bg-gray-25 px-5 py-4 dark:bg-gray-900">
-                            <dt class="text-xs text-gray-500 dark:text-gray-400">{{ $label }}</dt>
-                            <dd class="mt-1 font-semibold text-gray-800 tabular-nums dark:text-white/90">{{ $value }}</dd>
-                        </div>
-                    @endforeach
-                </dl>
+                <x-common.facts :items="[
+                    ['Productos', $products->count()],
+                    ['Agotados', $products->where('available', false)->count()],
+                    ['Creada', $createdAt],
+                    ['Última edición', $updatedAt],
+                ]" />
             </aside>
         @endif
+        </x-slot:context>
 
         {{-- Eliminar: explica antes de tocar el botón por qué no se puede --}}
+        <x-slot:danger>
         @if ($action === 'edit')
             @can('delete categories')
                 <x-common.danger-zone title="Eliminar categoría"
                     :text="$products->isEmpty()
                         ? 'No tiene productos, así que se puede eliminar. Si solo quieres ocultarla, desactívala.'
                         : 'Tiene ' . $products->count() . ' ' . ($products->count() === 1 ? 'producto' : 'productos') . '. Muévelos a otra categoría antes de eliminarla, o desactívala para ocultarla de la carta.'"
-                    button="Eliminar categoría" :disabled="$products->isNotEmpty()" class="@[60rem]:col-start-1 @[60rem]:row-start-2" />
+                    button="Eliminar categoría" :disabled="$products->isNotEmpty()" />
             @endcan
         @endif
-        </div>
-    </div>
+        </x-slot:danger>
+    </x-common.form-layout>
 </form>
 
 @push('scripts')
