@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['name', 'description', 'image', 'price'])]
+#[Fillable(['name', 'description', 'image', 'price', 'is_active'])]
 class Combo extends Model
 {
     use SoftDeletes;
@@ -18,12 +18,16 @@ class Combo extends Model
     {
         return [
             'price' => 'decimal:2',
+            'is_active' => 'boolean',
         ];
     }
 
+    /**
+     * Productos que trae el combo; el pivot quantity indica cuántas unidades de cada uno.
+     */
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'combos_products')->withTimestamps();
+        return $this->belongsToMany(Product::class, 'combos_products')->withPivot('quantity')->withTimestamps();
     }
 
     public function offers(): BelongsToMany
@@ -32,11 +36,22 @@ class Combo extends Model
     }
 
     /**
-     * Combos sin ningún producto agotado.
+     * Resumen de lo que trae, p. ej. "3 Empanada de carne + 1 Gaseosa".
+     */
+    public function contents(): string
+    {
+        return $this->products
+            ->map(fn (Product $product) => $product->pivot->quantity.' '.$product->name)
+            ->implode(' + ');
+    }
+
+    /**
+     * Combos activos y sin ningún producto agotado.
      */
     #[Scope]
     protected function available(Builder $query): void
     {
-        $query->whereDoesntHave('products', fn (Builder $product) => $product->where('available', false));
+        $query->where('is_active', true)
+            ->whereDoesntHave('products', fn (Builder $product) => $product->where('available', false));
     }
 }

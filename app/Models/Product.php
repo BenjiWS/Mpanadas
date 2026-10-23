@@ -47,7 +47,7 @@ class Product extends Model
 
     public function combos(): BelongsToMany
     {
-        return $this->belongsToMany(Combo::class, 'combos_products')->withTimestamps();
+        return $this->belongsToMany(Combo::class, 'combos_products')->withPivot('quantity')->withTimestamps();
     }
 
     public function offers(): BelongsToMany
