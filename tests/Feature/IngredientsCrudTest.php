@@ -104,6 +104,28 @@ class IngredientsCrudTest extends TestCase
         $this->assertModelExists($ingredient);
     }
 
+    public function test_edit_shows_where_it_is_used_and_why_it_cannot_be_deleted(): void
+    {
+        $queso = Ingredient::create(['name' => 'Queso', 'extra_price' => 0.5]);
+        Product::create(['name' => 'Caprese', 'price' => 2.5])->ingredients()->attach($queso, ['is_removable' => false]);
+        Product::create(['name' => 'Humita', 'price' => 2.5])->extras()->attach($queso, ['price' => 0.8]);
+
+        Livewire::actingAs($this->admin)->test(CrudIngredient::class, ['ingredient' => $queso])
+            ->assertSee('Así se ofrece en caja')
+            ->assertSee('Lo llevan por defecto')
+            ->assertSee('Caprese')
+            ->assertSee('Obligatorio')
+            ->assertSee('Se ofrece como extra en')
+            ->assertSee('+ $ 0,80')
+            // La zona para eliminar explica antes por qué no se puede.
+            ->assertSee('Queso se usa en productos.');
+
+        // Sin uso se puede eliminar y lo dice.
+        $huevo = Ingredient::create(['name' => 'Huevo', 'extra_price' => 0.4]);
+        Livewire::actingAs($this->admin)->test(CrudIngredient::class, ['ingredient' => $huevo])
+            ->assertSee('No se usa en productos ni en ventas, así que se puede eliminar.');
+    }
+
     public function test_filters_and_stats(): void
     {
         $queso = Ingredient::create(['name' => 'Queso', 'extra_price' => 0.5, 'description' => 'Mozzarella rallada']);
